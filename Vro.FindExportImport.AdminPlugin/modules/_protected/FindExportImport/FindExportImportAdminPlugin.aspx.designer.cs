@@ -94,6 +94,24 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::System.Web.UI.HtmlControls.HtmlInputFile fileToImport;
         
         /// <summary>
+        /// importResultsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel importResultsPanel;
+        
+        /// <summary>
+        /// importResults control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal importResults;
+        
+        /// <summary>
         /// importButton control.
         /// </summary>
         /// <remarks>

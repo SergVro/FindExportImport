@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using EPiServer.ServiceLocation;
 using Vro.FindExportImport.Models;
 
-namespace Vro.FindExportImport.Export
+namespace Vro.FindExportImport.Import
 {
-    [ServiceConfiguration(typeof(IExporter))]
-    public class SynonymExporter : ExporterBase<SynonymEntity>
+    [ServiceConfiguration(typeof(IImporter))]
+    public class RelatedQueryImporter : ImporterBase<RelatedQueryEntity>
     {
-        public SynonymExporter() : base("_admin/synonym?from={0}&size={1}")
+        public RelatedQueryImporter() : base("_didyoumean/")
         {
         }
     }

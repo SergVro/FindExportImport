@@ -13,39 +13,40 @@ using EPiServer.Find.Helpers;
 using EPiServer.Find.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Export
 {
-    public abstract class BaseExporter : IExporter
+    public abstract class ExporterBase<T> : IExporter where T : IOptimizationEntity
     {
         public string Url { get; set; }
         public string EntityKey { get; set; }
         public int PageSize { get; set; }
         public IJsonRequestFactory RequestFactory { get; set; }
 
-        protected BaseExporter(string entityKey, string entityListUrlTemplate)
+        protected ExporterBase(string entityListUrlTemplate)
         {
-            EntityKey = entityKey;
+            EntityKey = typeof(T).Name;
             PageSize = 50;
             var config = Configuration.GetConfiguration();
-            Url = String.Format("{0}{1}/{2}", config.ServiceUrl, config.DefaultIndex, entityListUrlTemplate);
+            Url = $"{config.ServiceUrl}{config.DefaultIndex}/{entityListUrlTemplate}";
             var requestTimeout = Configuration.GetConfiguration().DefaultRequestTimeout;
             RequestFactory = new JsonRequestFactory(requestTimeout);
         }
 
-        public string LoadPage(int from, int size)
+        protected virtual string LoadPage(int from, int size)
         {
-            var url =  String.Format(Url, from, size);
+            var url = string.Format(Url, from, size);
             var request = RequestFactory.CreateRequest(url, HttpVerbs.Get, null);
             var responseBody = request.GetResponse();
             return responseBody;
         }
 
-        public void WriteToStream(JsonWriter writer)
+        public virtual void WriteToStream(JsonWriter writer)
         {
-            var entitySet = new EntitySet();
+            var entitySet = new EntitySet<IOptimizationEntity>();
             entitySet.Key = EntityKey;
-            entitySet.Entities = new List<JObject>();
+            entitySet.Entities = new List<IOptimizationEntity>();
 
             var serializer = Serializer.CreateDefault();
             try
@@ -59,8 +60,8 @@ namespace Vro.FindExportImport.Export
                     using (var reader = new StringReader(responseBody))
                     {
                         var jsonReader = new JsonTextReader(reader);
-                        var result = serializer.Deserialize<ListResult>(jsonReader);
-                        entitySet.Entities.AddRange(result.Hits);
+                        var result = DeserializeResult(serializer, jsonReader);
+                        entitySet.Entities.AddRange(result.Hits.Cast<IOptimizationEntity>());
                         total = result.Total;
                         page++;
 
@@ -74,20 +75,23 @@ namespace Vro.FindExportImport.Export
                 if (originalException.Response.IsNotNull())
                 {
                     var responseStream = originalException.Response.GetResponseStream();
-                    StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
-                    var response = streamReader.ReadToEnd();
-                    if (!string.IsNullOrEmpty(response))
+                    if (responseStream != null)
                     {
-                        try
+                        StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
+                        var response = streamReader.ReadToEnd();
+                        if (!string.IsNullOrEmpty(response))
                         {
-                            response = JsonConvert.DeserializeObject<ServiceError>(response).Error;
-                        }
-                        catch (Exception)
-                        {
+                            try
+                            {
+                                response = JsonConvert.DeserializeObject<ServiceError>(response).Error;
+                            }
+                            catch (Exception)
+                            {
 
+                            }
                         }
+                        message = message + Environment.NewLine + response;
                     }
-                    message = message + Environment.NewLine + response;
                 }
                 throw new ServiceException(message, originalException);
             }
@@ -95,5 +99,10 @@ namespace Vro.FindExportImport.Export
             serializer.Serialize(writer, entitySet);
         }
 
+        protected virtual ListResult<T> DeserializeResult(JsonSerializer serializer, JsonTextReader jsonReader)
+        {
+            var result = serializer.Deserialize<ListResult<T>>(jsonReader);
+            return result;
+        }
     }
 }

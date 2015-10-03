@@ -8,6 +8,7 @@ using EPiServer.Find.Json;
 using EPiServer.ServiceLocation;
 using Newtonsoft.Json;
 using Vro.FindExportImport.Import;
+using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport
 {
@@ -22,14 +23,11 @@ namespace Vro.FindExportImport
             {
                 using (var jsonReader = new JsonTextReader(streamReader))
                 {
-                    var importedData = serializer.Deserialize<IEnumerable<EntitySet>>(jsonReader);
+                    var importedData = serializer.Deserialize<IEnumerable<EntitySet<IOptimizationEntity>>>(jsonReader);
                     foreach (var importedEntities in importedData)
                     {
                         var importer = importers.FirstOrDefault(i => i.EntityKey.Equals(importedEntities.Key));
-                        if (importer != null)
-                        {
-                            importer.Import(importedEntities.Entities);
-                        }
+                        result += importer?.Import(importedEntities.Entities);
                     }
                 }
             }

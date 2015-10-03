@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Import
 {
     interface IImporter
     {
         string EntityKey { get; set; }
-        void Import(List<JObject> entities);
+        string Import(List<IOptimizationEntity> entities);
     }
 }

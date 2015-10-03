@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using EPiServer.Find.UI;
 using EPiServer.Find.UI.Helpers;
 using EPiServer.ServiceLocation;
+using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Export
 {
     [ServiceConfiguration(typeof(IExporter))]
-    public class RelatedQueryExporter : BaseExporter
+    public class RelatedQueryExporter : ExporterBase<RelatedQueryEntity>
     {
-        public RelatedQueryExporter() : base(EntityType.RelatedQuery, "_didyoumean/list?from={0}&size={1}")
+        public RelatedQueryExporter() : base("_didyoumean/list?from={0}&size={1}")
         {
         }
     }

@@ -21,7 +21,7 @@ namespace Vro.FindExportImport.AdminPlugin
                 .Select(exporter => new CheckBox
                 {
                     ID = exporter.EntityKey,
-                    Text = GetExporterName(exporter.EntityKey),
+                    Text = Helpers.GetEntityName(exporter.EntityKey),
                     Checked = true
                 });
 
@@ -36,35 +36,15 @@ namespace Vro.FindExportImport.AdminPlugin
             base.OnInit(e);
         }
 
-        private string GetExporterName(string entityKey)
-        {
-            if (string.IsNullOrWhiteSpace(entityKey))
-            {
-                throw new ArgumentException("entityKey");
-            }
-            var name = "";
-            foreach (var c in entityKey)
-            {
-                if (name.Length == 0)
-                {
-                    name = c.ToString().ToUpper();
-                }
-                else if (c.ToString().ToUpper().Equals(c.ToString(), StringComparison.InvariantCulture))
-                {
-                    name += " " + c;
-                }
-                else
-                {
-                    name += c;
-                }
-            }
-            return name;
-        }
+     
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            importResults.Text = "";
+            importResultsPanel.Visible = false;
             SystemMessageContainer.Heading = "Find Export / Import";
+            
         }
 
         protected void ExportClick(object sender, EventArgs e)
@@ -96,8 +76,11 @@ namespace Vro.FindExportImport.AdminPlugin
                 return;
             }
 
-            //Request.Files[0].InputStream
-
+            var importManager = new ImportManager();
+            var resultsMessage = importManager.ImportFromStream(Request.Files[0].InputStream);
+            importResultsPanel.Visible = true;
+            importResults.Text = !string.IsNullOrWhiteSpace(resultsMessage) ? resultsMessage.Replace(Environment.NewLine, "<br>") : "Import complete";
+            
         }
     }
 }

@@ -32,13 +32,9 @@
                         <asp:Label runat="server" AssociatedControlID="fileToImport" Text="Select a file to import" />
                         <input id="fileToImport" type="file" runat="server" accept=".json" />
                     </div>
-
-                    <p>
-                        Please select optimizations to import form the list below:
-                    </p>
-                    <p>
-                        
-                    </p>
+                	<asp:Panel runat="server" CssClass="EP-systemMessage" ID="importResultsPanel">
+	                    <asp:Literal runat="server" Text="" ID="importResults" />
+	                </asp:Panel>
                 </div>
             </div>
             <div class="epi-buttonContainer">

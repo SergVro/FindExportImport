@@ -199,18 +199,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntitySet.cs" />
-    <Compile Include="EntityType.cs" />
+    <Compile Include="Models\AutocompleteEntity.cs" />
+    <Compile Include="Models\EntitySet.cs" />
     <Compile Include="ExportManager.cs" />
     <Compile Include="Export\AutocompleteExporter.cs" />
     <Compile Include="Export\IExporter.cs" />
-    <Compile Include="Export\ListResult.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Models\ListResult.cs" />
     <Compile Include="Export\SynonymExporter.cs" />
-    <Compile Include="Export\BaseExporter.cs" />
+    <Compile Include="Export\ExporterBase.cs" />
     <Compile Include="Export\RelatedQueryExporter.cs" />
     <Compile Include="ImportManager.cs" />
-    <Compile Include="Import\BaseImporter.cs" />
+    <Compile Include="Import\ImporterBase.cs" />
     <Compile Include="Import\IImporter.cs" />
+    <Compile Include="Import\AutocompleteImporter.cs" />
+    <Compile Include="Import\SynonymImporter.cs" />
+    <Compile Include="Import\RelatedQueryImporter.cs" />
+    <Compile Include="Models\IOptimizationEntity.cs" />
+    <Compile Include="Models\RelatedQueryEntity.cs" />
+    <Compile Include="Models\SynonymEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
