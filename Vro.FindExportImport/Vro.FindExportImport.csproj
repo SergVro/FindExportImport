@@ -199,7 +199,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Export\BestBetExporter.cs" />
+    <Compile Include="Import\BestBetImporter.cs" />
     <Compile Include="Models\AutocompleteEntity.cs" />
+    <Compile Include="Models\BestBetEntity.cs" />
     <Compile Include="Models\EntitySet.cs" />
     <Compile Include="ExportManager.cs" />
     <Compile Include="Export\AutocompleteExporter.cs" />
