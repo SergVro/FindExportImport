@@ -40,6 +40,15 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::EPiServer.UI.WebControls.Tab Tab2;
         
         /// <summary>
+        /// Tab3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::EPiServer.UI.WebControls.Tab Tab3;
+        
+        /// <summary>
         /// TabView control.
         /// </summary>
         /// <remarks>
@@ -119,5 +128,50 @@ namespace Vro.FindExportImport.AdminPlugin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::EPiServer.UI.WebControls.ToolButton importButton;
+        
+        /// <summary>
+        /// Delete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Delete;
+        
+        /// <summary>
+        /// deleters control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel deleters;
+        
+        /// <summary>
+        /// deleteResultsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel deleteResultsPanel;
+        
+        /// <summary>
+        /// deleteResults control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal deleteResults;
+        
+        /// <summary>
+        /// ToolButton1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::EPiServer.UI.WebControls.ToolButton ToolButton1;
     }
 }

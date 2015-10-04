@@ -201,6 +201,9 @@
   <ItemGroup>
     <Compile Include="Export\BestBetExporter.cs" />
     <Compile Include="Import\BestBetImporter.cs" />
+    <Compile Include="Models\StatusResponse.cs" />
+    <Compile Include="Stores\BestBetStore.cs" />
+    <Compile Include="Stores\IStore.cs" />
     <Compile Include="Models\AutocompleteEntity.cs" />
     <Compile Include="Models\BestBetEntity.cs" />
     <Compile Include="Models\EntitySet.cs" />
@@ -222,6 +225,8 @@
     <Compile Include="Models\RelatedQueryEntity.cs" />
     <Compile Include="Models\SynonymEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stores\IndexStore.cs" />
+    <Compile Include="Stores\StoreFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

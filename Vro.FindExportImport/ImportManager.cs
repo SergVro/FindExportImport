@@ -16,7 +16,7 @@ namespace Vro.FindExportImport
     {
         public string ImportFromStream(Stream inputStream)
         {
-            var importers = ServiceLocator.Current.GetAllInstances<IImporter>().ToList();
+            var importers = GetImporters();
             var serializer = Serializer.CreateDefault();
             var result = "";
             using (var streamReader = new StreamReader(inputStream))
@@ -32,6 +32,17 @@ namespace Vro.FindExportImport
                 }
             }
             return result;
+        }
+
+        public List<IImporter> GetImporters()
+        {
+            return ServiceLocator.Current.GetAllInstances<IImporter>().ToList();
+        }
+
+        public void Delete(List<string> entityKeys)
+        {
+            var importers = GetImporters().Where(i => entityKeys.Contains(i.EntityKey)).ToList();
+            importers.ForEach(i => i.DeleteAll());
         }
     }
 }

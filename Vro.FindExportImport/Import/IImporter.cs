@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+﻿using System.Collections.Generic;
 using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Import
 {
-    interface IImporter
+    public interface IImporter
     {
         string EntityKey { get; set; }
         string Import(List<IOptimizationEntity> entities);
+        void DeleteAll();
     }
 }

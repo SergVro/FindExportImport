@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using EPiServer.ServiceLocation;
 using Vro.FindExportImport.Models;
+using Vro.FindExportImport.Stores;
 
 namespace Vro.FindExportImport.Export
 {
     [ServiceConfiguration(typeof(IExporter))]
     public class SynonymExporter : ExporterBase<SynonymEntity>
     {
-        public SynonymExporter() : base("_admin/synonym?from={0}&size={1}")
+        public SynonymExporter(): base(StoreFactory.GetStore<SynonymEntity>())
         {
         }
     }

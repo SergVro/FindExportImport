@@ -5,26 +5,15 @@ using EPiServer.Find.UI.Controllers;
 using EPiServer.ServiceLocation;
 using Newtonsoft.Json;
 using Vro.FindExportImport.Models;
+using Vro.FindExportImport.Stores;
 
 namespace Vro.FindExportImport.Export
 {
     [ServiceConfiguration(typeof(IExporter))]
     public class BestBetExporter : ExporterBase<BestBetEntity>
     {
-        public BestBetExporter() : base("")
+        public BestBetExporter() : base(StoreFactory.GetStore<BestBetEntity>())
         {
-        }
-
-        protected override string LoadPage(int @from, int size)
-        {
-            var bestBetsController = new BestBetsController
-            {
-                Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
-            };
-            var listMessage = bestBetsController.GetList(from: from, size: size);
-            var stringTask = listMessage.Content.ReadAsStringAsync();
-            return stringTask.Result;
         }
     }
 }

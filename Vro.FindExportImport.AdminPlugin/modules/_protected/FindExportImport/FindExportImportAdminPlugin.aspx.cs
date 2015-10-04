@@ -13,30 +13,16 @@ namespace Vro.FindExportImport.AdminPlugin
     public partial class FindExportImportAdminPlugin : WebFormsBase
     {
         private ExportManager _exportManager;
+        private ImportManager _importManager;
 
         protected override void OnInit(EventArgs e)
         {
+            _importManager = new ImportManager();
             _exportManager = new ExportManager();
-            var checkBoxes = _exportManager.GetExporters()
-                .Select(exporter => new CheckBox
-                {
-                    ID = exporter.EntityKey,
-                    Text = Helpers.GetEntityName(exporter.EntityKey),
-                    Checked = true
-                });
-
-            foreach (var checkBox in checkBoxes)
-            {
-                var wrapper = new Panel {CssClass = "epi-padding-small"};
-                wrapper.Controls.Add(checkBox);
-                exporters.Controls.Add(wrapper);
-            }
-
-
+            CreateCheckBoxes(exporters, _exportManager.GetExporters().Select(exporter => exporter.EntityKey));
+            CreateCheckBoxes(deleters, _importManager.GetImporters().Select(importer => importer.EntityKey));
             base.OnInit(e);
         }
-
-     
 
         protected override void OnLoad(EventArgs e)
         {
@@ -47,24 +33,46 @@ namespace Vro.FindExportImport.AdminPlugin
             
         }
 
-        protected void ExportClick(object sender, EventArgs e)
+        private void CreateCheckBoxes(Panel container, IEnumerable<string> ids)
+        {
+            var checkBoxes = ids
+                .Select(id => new CheckBox
+                {
+                    ID = container.ID + id,
+                    Text = Helpers.GetEntityName(id),
+                    Checked = true
+                });
+
+            foreach (var checkBox in checkBoxes)
+            {
+                var wrapper = new Panel {CssClass = "epi-padding-small"};
+                wrapper.Controls.Add(checkBox);
+                container.Controls.Add(wrapper);
+            }
+        }
+
+        private List<string> GetCheckedIds(Panel container)
         {
             var exportersList = new List<string>();
 
-            foreach (Panel wrapper in exporters.Controls)
+            foreach (Panel wrapper in container.Controls)
             {
                 var checkBox = wrapper.Controls[0] as CheckBox;
                 if (checkBox != null && checkBox.Checked)
                 {
-                    exportersList.Add(checkBox.ID);
+                    exportersList.Add(checkBox.ID.Substring(container.ID.Length));
                 }
             }
+            return exportersList;
+        }
 
-            var exportManager = new ExportManager();
+        protected void ExportClick(object sender, EventArgs e)
+        {
+            var exportersList = GetCheckedIds(exporters);
             Response.Clear();
             Response.ContentType = "applicaiton/json";
             Response.AddHeader("content-disposition", "attachment; filename=FindOptimizations.json");
-            exportManager.ExportToStream(Response.OutputStream, exportersList);
+            _exportManager.ExportToStream(Response.OutputStream, exportersList);
             Response.End();
         }
 
@@ -76,11 +84,19 @@ namespace Vro.FindExportImport.AdminPlugin
                 return;
             }
 
-            var importManager = new ImportManager();
-            var resultsMessage = importManager.ImportFromStream(Request.Files[0].InputStream);
+            var resultsMessage = _importManager.ImportFromStream(Request.Files[0].InputStream);
             importResultsPanel.Visible = true;
             importResults.Text = !string.IsNullOrWhiteSpace(resultsMessage) ? resultsMessage.Replace(Environment.NewLine, "<br>") : "Import complete";
             
+        }
+
+        protected void DeleteClick(object sender, EventArgs e)
+        {
+            var deletersList = GetCheckedIds(deleters);
+            _importManager.Delete(deletersList);
+            deleteResultsPanel.Visible = true;
+            deleteResults.Text = "Deletion complete";
+
         }
     }
 }
