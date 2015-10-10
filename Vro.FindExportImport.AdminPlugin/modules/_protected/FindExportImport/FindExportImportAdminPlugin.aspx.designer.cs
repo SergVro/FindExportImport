@@ -67,6 +67,15 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::System.Web.UI.WebControls.Panel Export;
         
         /// <summary>
+        /// exportSite control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList exportSite;
+        
+        /// <summary>
         /// exporters control.
         /// </summary>
         /// <remarks>
@@ -92,6 +101,15 @@ namespace Vro.FindExportImport.AdminPlugin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Import;
+        
+        /// <summary>
+        /// importSite control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList importSite;
         
         /// <summary>
         /// fileToImport control.
@@ -137,6 +155,15 @@ namespace Vro.FindExportImport.AdminPlugin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Delete;
+        
+        /// <summary>
+        /// deleteSite control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList deleteSite;
         
         /// <summary>
         /// deleters control.

@@ -24,7 +24,7 @@ namespace Vro.FindExportImport.Export
         public JsonSerializer DefaultSerializer { get; set; }
         public string EntityKey { get; set; }
 
-        public virtual void WriteToStream(JsonWriter writer)
+        public virtual void WriteToStream(string siteId, JsonWriter writer)
         {
             if (Store == null)
             {
@@ -40,7 +40,7 @@ namespace Vro.FindExportImport.Export
             int total;
             do
             {
-                var result = Store.List(page*PageSize, PageSize);
+                var result = Store.List(siteId, page*PageSize, PageSize);
                 entitySet.Entities.AddRange(result.Hits.Cast<IOptimizationEntity>());
                 total = result.Total;
                 page++;

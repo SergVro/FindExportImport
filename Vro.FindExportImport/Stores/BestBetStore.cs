@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Web.Http;
+using EPiServer.Core;
 using EPiServer.Find;
 using EPiServer.Find.Json;
 using EPiServer.Find.UI.Controllers;
@@ -33,10 +34,10 @@ namespace Vro.FindExportImport.Stores
             }
         }
 
-        public ListResult<BestBetEntity> List(int @from, int size)
+        public ListResult<BestBetEntity> List(string siteId, int @from, int size)
         {
             var bestBetsController = CreateBestBetsController();
-            var responseMessage = bestBetsController.GetList(from: from, size: size);
+            var responseMessage = bestBetsController.GetList(from: from, size: size, tags:"siteid:"+siteId);
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;
             using (var reader = new StringReader(response))
@@ -58,9 +59,11 @@ namespace Vro.FindExportImport.Stores
                 BestBetTargetDescription = entity.BestBetTargetDescription,
                 Tags = entity.Tags,
                 TargetType = entity.TargetType,
-                TargetKey = entity.TargetKey,
+                TargetKey = ContentReference.RootPage.ToString(), //we have to replace entity.TargetKey here with some existing ContentReference, otherwise Find UI can't even load Best bets
+                
                 BestBetHasOwnStyle = entity.BestBetHasOwnStyle
             };
+            
             var responseMessage = bestBetsController.Post(bestBetModel);
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;

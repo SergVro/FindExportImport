@@ -5,14 +5,15 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sevo.EPiServer.Find.ExportImport")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Vro.EPiServer.Find.ExportImport.AdminPlugin")]
+[assembly: AssemblyDescription("An EPiServer CMS Admin plugin for EPiServer Find optimizations export and import")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Sevo.EPiServer.Find.ExportImport")]
+[assembly: AssemblyCompany("Sergii Vorushylo")]
+[assembly: AssemblyProduct("Vro.EPiServer.Find.ExportImport.AdminPlugin")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -31,5 +32,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.*")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

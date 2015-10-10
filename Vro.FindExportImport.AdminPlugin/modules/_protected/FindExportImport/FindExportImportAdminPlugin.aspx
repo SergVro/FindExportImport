@@ -13,6 +13,9 @@
                 <div class="epi-size15">
                     <h2>Here you can export Find optimizations to a JSON file</h2> 
                     <p>
+                        Please select a site to export: <asp:DropDownList runat="server" ID="exportSite" AutoPostBack="False"/>
+                    </p>
+                    <p>
                         Please select optimizations to export form the list below:
                     </p>
                     <asp:Panel runat="server" ID="exporters"></asp:Panel>        
@@ -29,6 +32,9 @@
             <div class="epi-formArea epi-padding">
                 <div class="epi-size15">
                     <h2>Here you can import Find optimizations from a JSON file.</h2>
+                     <p>
+                        Please select a site to import optimizations: <asp:DropDownList runat="server" ID="importSite" AutoPostBack="False"/>
+                    </p>
                     <div>
                         <asp:Label runat="server" AssociatedControlID="fileToImport" Text="Select a file to import" />
                         <input id="fileToImport" type="file" runat="server" accept=".json" />
@@ -48,7 +54,10 @@
             <div class="epi-formArea epi-padding">
                 <div class="epi-size15">
                     <h2>Here you can delete Find optimizations. </h2> 
-                    <b>There is not way to restore deleted optimizations.</b>
+                    <b style="color:red">There is no way to restore deleted optimizations.</b>
+                    <p>
+                        Please select a site to delete optimizations from: <asp:DropDownList runat="server" ID="deleteSite" AutoPostBack="False"/>
+                    </p>
                     <p>
                         Please select optimization types to delete form the list below:
                     </p>

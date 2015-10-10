@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/SergVro/FindExportImport/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/SergVro/FindExportImport</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>The first release.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>EPiServer Find</tags>
+  </metadata>
+  <files>
+    <file src="bin\Vro.FindExportImport*.dll" target="lib\net45" />
+  </files>
+
+</package>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
+using Castle.Core.Internal;
 using EPiServer.PlugIn;
 using EPiServer.Shell.WebForms;
 
@@ -19,8 +20,13 @@ namespace Vro.FindExportImport.AdminPlugin
         {
             _importManager = new ImportManager();
             _exportManager = new ExportManager();
+
             CreateCheckBoxes(exporters, _exportManager.GetExporters().Select(exporter => exporter.EntityKey));
             CreateCheckBoxes(deleters, _importManager.GetImporters().Select(importer => importer.EntityKey));
+
+            _exportManager.GetSites().ForEach(s => exportSite.Items.Add(new ListItem(s.Name, s.Id)));
+            _exportManager.GetSites().ForEach(s => importSite.Items.Add(new ListItem(s.Name, s.Id)));
+            _exportManager.GetSites().ForEach(s => deleteSite.Items.Add(new ListItem(s.Name, s.Id)));
             base.OnInit(e);
         }
 
@@ -72,7 +78,7 @@ namespace Vro.FindExportImport.AdminPlugin
             Response.Clear();
             Response.ContentType = "applicaiton/json";
             Response.AddHeader("content-disposition", "attachment; filename=FindOptimizations.json");
-            _exportManager.ExportToStream(Response.OutputStream, exportersList);
+            _exportManager.ExportToStream(exportersList, exportSite.SelectedValue, Response.OutputStream);
             Response.End();
         }
 
@@ -84,7 +90,7 @@ namespace Vro.FindExportImport.AdminPlugin
                 return;
             }
 
-            var resultsMessage = _importManager.ImportFromStream(Request.Files[0].InputStream);
+            var resultsMessage = _importManager.ImportFromStream(importSite.SelectedValue, Request.Files[0].InputStream);
             importResultsPanel.Visible = true;
             importResults.Text = !string.IsNullOrWhiteSpace(resultsMessage) ? resultsMessage.Replace(Environment.NewLine, "<br>") : "Import complete";
             
@@ -93,7 +99,7 @@ namespace Vro.FindExportImport.AdminPlugin
         protected void DeleteClick(object sender, EventArgs e)
         {
             var deletersList = GetCheckedIds(deleters);
-            _importManager.Delete(deletersList);
+            _importManager.Delete(deletersList, deleteSite.SelectedValue);
             deleteResultsPanel.Visible = true;
             deleteResults.Text = "Deletion complete";
 

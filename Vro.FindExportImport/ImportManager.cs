@@ -14,7 +14,7 @@ namespace Vro.FindExportImport
 {
     public class ImportManager
     {
-        public string ImportFromStream(Stream inputStream)
+        public string ImportFromStream(string siteId, Stream inputStream)
         {
             var importers = GetImporters();
             var serializer = Serializer.CreateDefault();
@@ -27,7 +27,7 @@ namespace Vro.FindExportImport
                     foreach (var importedEntities in importedData)
                     {
                         var importer = importers.FirstOrDefault(i => i.EntityKey.Equals(importedEntities.Key));
-                        result += importer?.Import(importedEntities.Entities);
+                        result += importer?.Import(siteId, importedEntities.Entities);
                     }
                 }
             }
@@ -39,10 +39,10 @@ namespace Vro.FindExportImport
             return ServiceLocator.Current.GetAllInstances<IImporter>().ToList();
         }
 
-        public void Delete(List<string> entityKeys)
+        public void Delete(List<string> entityKeys, string siteId)
         {
             var importers = GetImporters().Where(i => entityKeys.Contains(i.EntityKey)).ToList();
-            importers.ForEach(i => i.DeleteAll());
+            importers.ForEach(i => i.DeleteAll(siteId));
         }
     }
 }
