@@ -39,10 +39,10 @@ namespace Vro.FindExportImport
             return ServiceLocator.Current.GetAllInstances<IImporter>().ToList();
         }
 
-        public void Delete(List<string> entityKeys, string siteId)
+        public void Delete(List<string> entityKeys, string siteId, string language)
         {
             var importers = GetImporters().Where(i => entityKeys.Contains(i.EntityKey)).ToList();
-            importers.ForEach(i => i.DeleteAll(siteId));
+            importers.ForEach(i => i.DeleteAll(siteId, language));
         }
     }
 }

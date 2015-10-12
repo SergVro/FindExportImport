@@ -42,13 +42,13 @@ namespace Vro.FindExportImport.Import
             return resultMessageString;
         }
 
-        public void DeleteAll(string siteId)
+        public void DeleteAll(string siteId, string language)
         {
             int pageSize = 50;
             int total;
             do
             {
-                var listToDelete = Store.List(siteId, 0, pageSize);
+                var listToDelete = Store.List(siteId, language, 0, pageSize);
                 foreach (var hit in listToDelete.Hits)
                 {
                     Store.Delete(hit.Id);

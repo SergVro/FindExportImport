@@ -6,6 +6,6 @@ namespace Vro.FindExportImport.Export
     public interface IExporter
     {
         string EntityKey { get; }
-        void WriteToStream(string siteId, JsonWriter writer);
+        void WriteToStream(string siteId, string language, JsonWriter writer);
     }
 }

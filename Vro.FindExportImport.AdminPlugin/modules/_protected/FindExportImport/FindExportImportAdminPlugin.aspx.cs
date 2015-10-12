@@ -27,6 +27,10 @@ namespace Vro.FindExportImport.AdminPlugin
             _exportManager.GetSites().ForEach(s => exportSite.Items.Add(new ListItem(s.Name, s.Id)));
             _exportManager.GetSites().ForEach(s => importSite.Items.Add(new ListItem(s.Name, s.Id)));
             _exportManager.GetSites().ForEach(s => deleteSite.Items.Add(new ListItem(s.Name, s.Id)));
+
+            _exportManager.GetLanguages().ForEach(l => exportLanguage.Items.Add(new ListItem(l.Name, l.Id)));
+            _exportManager.GetLanguages().ForEach(l => deleteLanguage.Items.Add(new ListItem(l.Name, l.Id)));
+
             base.OnInit(e);
         }
 
@@ -78,7 +82,7 @@ namespace Vro.FindExportImport.AdminPlugin
             Response.Clear();
             Response.ContentType = "applicaiton/json";
             Response.AddHeader("content-disposition", "attachment; filename=FindOptimizations.json");
-            _exportManager.ExportToStream(exportersList, exportSite.SelectedValue, Response.OutputStream);
+            _exportManager.ExportToStream(exportersList, exportSite.SelectedValue, exportLanguage.SelectedValue, Response.OutputStream);
             Response.End();
         }
 
@@ -99,7 +103,7 @@ namespace Vro.FindExportImport.AdminPlugin
         protected void DeleteClick(object sender, EventArgs e)
         {
             var deletersList = GetCheckedIds(deleters);
-            _importManager.Delete(deletersList, deleteSite.SelectedValue);
+            _importManager.Delete(deletersList, deleteLanguage.SelectedValue, deleteSite.SelectedValue);
             deleteResultsPanel.Visible = true;
             deleteResults.Text = "Deletion complete";
 

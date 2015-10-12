@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using EPiServer.Find;
 using EPiServer.Find.Cms;
+using EPiServer.Find.Framework;
 using EPiServer.ServiceLocation;
 using Newtonsoft.Json;
 using Vro.FindExportImport.Export;
@@ -12,7 +14,7 @@ namespace Vro.FindExportImport
 {
     public class ExportManager
     {
-        public void ExportToStream(List<string> selectedExporters, string siteId, Stream stream)
+        public void ExportToStream(List<string> selectedExporters, string siteId, string language, Stream stream)
         {
             var exporters = GetExporters().Where(e => selectedExporters.Contains(e.EntityKey));
 
@@ -23,7 +25,7 @@ namespace Vro.FindExportImport
                     writer.WriteStartArray();
                     foreach (var exporter in exporters)
                     {
-                        exporter.WriteToStream(siteId, writer);
+                        exporter.WriteToStream(siteId, language, writer);
                     }
                     writer.WriteEndArray();
                 }
@@ -35,12 +37,19 @@ namespace Vro.FindExportImport
             return ServiceLocator.Current.GetAllInstances<IExporter>();
         }
 
-        public List<SiteModel> GetSites()
+        public List<TagSelectionModel> GetSites()
         {
             var loader = new CmsSiteIdentityLoader();
-            var sites = loader.SiteIdentites.Select(i => new SiteModel{ Id = i.Id.ToString(), Name = i.Name}).ToList();
-            sites.Insert(0, new SiteModel {Id = loader.AllSitesId, Name ="All sites"} );
+            var sites = loader.SiteIdentites.Select(i => new TagSelectionModel{ Id = i.Id.ToString(), Name = i.Name}).ToList();
+            sites.Insert(0, new TagSelectionModel {Id = loader.AllSitesId, Name ="All sites"} );
             return sites;
+        }
+
+        public List<TagSelectionModel> GetLanguages()
+        {
+            var languages = SearchClient.Instance.Settings.Languages.Select(l => new TagSelectionModel {Id = l.FieldSuffix, Name = l.Name}).ToList();
+            languages.Insert(0, new TagSelectionModel { Id = Languages.AllLanguagesSuffix, Name="All languages"});
+            return languages;
         }
     }
 }

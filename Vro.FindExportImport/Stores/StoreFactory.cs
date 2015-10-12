@@ -22,7 +22,7 @@ namespace Vro.FindExportImport.Stores
             if (typeof (SynonymEntity) == typeof(T))
             {
                 var store = new IndexStore<T>("_admin/synonym");
-                store.ListUrlTemplate = store.BaseUrl + "?from={0}&size={1}";
+                store.ListUrlTemplate = store.BaseUrl + "?from={0}&size={1}&tags=language:{3}";
                 return store;
             }
             if (typeof(BestBetEntity) == typeof(T))

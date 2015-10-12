@@ -76,6 +76,15 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::System.Web.UI.WebControls.DropDownList exportSite;
         
         /// <summary>
+        /// exportLanguage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList exportLanguage;
+        
+        /// <summary>
         /// exporters control.
         /// </summary>
         /// <remarks>
@@ -164,6 +173,15 @@ namespace Vro.FindExportImport.AdminPlugin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList deleteSite;
+        
+        /// <summary>
+        /// deleteLanguage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList deleteLanguage;
         
         /// <summary>
         /// deleters control.

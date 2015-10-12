@@ -16,6 +16,9 @@
                         Please select a site to export: <asp:DropDownList runat="server" ID="exportSite" AutoPostBack="False"/>
                     </p>
                     <p>
+                        Please select a language to export: <asp:DropDownList runat="server" ID="exportLanguage" AutoPostBack="False"/>
+                    </p>
+                    <p>
                         Please select optimizations to export form the list below:
                     </p>
                     <asp:Panel runat="server" ID="exporters"></asp:Panel>        
@@ -56,7 +59,10 @@
                     <h2>Here you can delete Find optimizations. </h2> 
                     <b style="color:red">There is no way to restore deleted optimizations.</b>
                     <p>
-                        Please select a site to delete optimizations from: <asp:DropDownList runat="server" ID="deleteSite" AutoPostBack="False"/>
+                        Please select a site for optimizations to delete: <asp:DropDownList runat="server" ID="deleteSite" AutoPostBack="False"/>
+                    </p>
+                    <p>
+                        Please select a language for optimizations to delete: <asp:DropDownList runat="server" ID="deleteLanguage" AutoPostBack="False"/>
                     </p>
                     <p>
                         Please select optimization types to delete form the list below:

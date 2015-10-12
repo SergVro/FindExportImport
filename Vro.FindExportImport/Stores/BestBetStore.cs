@@ -34,10 +34,11 @@ namespace Vro.FindExportImport.Stores
             }
         }
 
-        public ListResult<BestBetEntity> List(string siteId, int @from, int size)
+        public ListResult<BestBetEntity> List(string siteId, string language, int @from, int size)
         {
             var bestBetsController = CreateBestBetsController();
-            var responseMessage = bestBetsController.GetList(from: from, size: size, tags:"siteid:"+siteId);
+            var responseMessage = bestBetsController.GetList(from: from, size: size, 
+                tags: $"siteid:{siteId},language:{language}");
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;
             using (var reader = new StringReader(response))
@@ -59,8 +60,10 @@ namespace Vro.FindExportImport.Stores
                 BestBetTargetDescription = entity.BestBetTargetDescription,
                 Tags = entity.Tags,
                 TargetType = entity.TargetType,
-                TargetKey = ContentReference.RootPage.ToString(), //we have to replace entity.TargetKey here with some existing ContentReference, otherwise Find UI can't even load Best bets
                 
+                // TODO: this causes validation exception if there are best bets with duplicate phrases, but different contents
+                TargetKey = ContentReference.RootPage.ToString(), //we have to replace entity.TargetKey here with some existing ContentReference
+
                 BestBetHasOwnStyle = entity.BestBetHasOwnStyle
             };
             
@@ -96,7 +99,18 @@ namespace Vro.FindExportImport.Stores
             using (var reader = new StringReader(responseBody))
             {
                 var jsonReader = new JsonTextReader(reader);
-                var result = DefaultSerializer.Deserialize<StatusResponse>(jsonReader);
+                StatusResponse result;
+                try
+                {
+                    result = DefaultSerializer.Deserialize<StatusResponse>(jsonReader);
+                }
+                catch (JsonSerializationException)
+                {
+                    result = new StatusResponse
+                    {
+                        Status = responseBody
+                    };
+                }
                 if (result.Status == null || !result.Status.Equals("ok"))
                 {
                     throw new ServiceException($"Error response: {result.Status ?? responseBody}");

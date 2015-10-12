@@ -30,7 +30,7 @@ namespace Vro.FindExportImport.Stores
         {
             var config = Configuration.GetConfiguration();
             BaseUrl = $"{config.ServiceUrl}{config.DefaultIndex}/{entityUrl}";
-            ListUrlTemplate = BaseUrl + "/list?from={0}&size={1}&tags=siteid:{2}";
+            ListUrlTemplate = BaseUrl + "/list?from={0}&size={1}&tags=siteid:{2},language:{3}";
             GetUrlTemplate = BaseUrl + "/{0}";
             DeleteUrlTemplate = BaseUrl + "/{0}";
             CreateUrlTemplate = BaseUrl;
@@ -89,10 +89,10 @@ namespace Vro.FindExportImport.Stores
 
         }
 
-        public ListResult<T> List(string siteId, int @from, int size)
+        public ListResult<T> List(string siteId, string language, int @from, int size)
         {
             ListResult<T> result = null;
-            var url = string.Format(ListUrlTemplate, from, size, siteId);
+            var url = string.Format(ListUrlTemplate, from, size, siteId, language);
             var request = RequestFactory.CreateRequest(url, HttpVerbs.Get, null);
             try
             {

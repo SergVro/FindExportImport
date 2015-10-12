@@ -201,7 +201,7 @@
   <ItemGroup>
     <Compile Include="Export\BestBetExporter.cs" />
     <Compile Include="Import\BestBetImporter.cs" />
-    <Compile Include="Models\SiteModel.cs" />
+    <Compile Include="Models\TagSelectionModel.cs" />
     <Compile Include="Models\StatusResponse.cs" />
     <Compile Include="Stores\BestBetStore.cs" />
     <Compile Include="Stores\IStore.cs" />
