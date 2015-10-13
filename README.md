@@ -1,4 +1,6 @@
 # EPiServer Find optimizations export/import plugin
+[![Build status](https://ci.appveyor.com/api/projects/status/9higbqvart6v07un/branch/master?svg=true)](https://ci.appveyor.com/project/SergVro/findexportimport/branch/master)
+
 This is EPiServer CMS Admin mode plugin for EPiServer Find optimizations export / import.
 The plugin allows to export and import synonyms, related queries, autocompletes and best bets.
 
