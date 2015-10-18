@@ -103,7 +103,7 @@ namespace Vro.FindExportImport.AdminPlugin
         protected void DeleteClick(object sender, EventArgs e)
         {
             var deletersList = GetCheckedIds(deleters);
-            _importManager.Delete(deletersList, deleteLanguage.SelectedValue, deleteSite.SelectedValue);
+            _importManager.Delete(deletersList, deleteSite.SelectedValue, deleteLanguage.SelectedValue);
             deleteResultsPanel.Visible = true;
             deleteResults.Text = "Deletion complete";
 

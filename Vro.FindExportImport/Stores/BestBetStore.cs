@@ -1,12 +1,19 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
+using EPiServer;
 using EPiServer.Core;
+using EPiServer.Data.Dynamic;
 using EPiServer.Find;
+using EPiServer.Find.Api.Querying.Filters;
+using EPiServer.Find.Cms;
+using EPiServer.Find.Framework;
 using EPiServer.Find.Json;
 using EPiServer.Find.UI.Controllers;
 using EPiServer.Find.UI.Models;
+using EPiServer.ServiceLocation;
 using Newtonsoft.Json;
 using Vro.FindExportImport.Models;
 
@@ -14,9 +21,13 @@ namespace Vro.FindExportImport.Stores
 {
     public class BestBetStore : IStore<BestBetEntity>
     {
+        private const string PageBestBetSelector = "PageBestBetSelector";
+        private const string CommerceBestBetSelector = "CommerceBestBetSelector";
+        private IContentRepository contentRepository;
         public BestBetStore()
         {
             DefaultSerializer = Serializer.CreateDefault();
+            contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
         }
 
         public JsonSerializer DefaultSerializer { get; set; }
@@ -44,12 +55,28 @@ namespace Vro.FindExportImport.Stores
             using (var reader = new StringReader(response))
             {
                 var jsonReader = new JsonTextReader(reader);
-                return DefaultSerializer.Deserialize<ListResult<BestBetEntity>>(jsonReader);
+                var listResult = DefaultSerializer.Deserialize<ListResult<BestBetEntity>>(jsonReader);
+                foreach (var entity in listResult.Hits)
+                {
+                    if (IsContentBestBet(entity))
+                    {
+                        var targetContentReference = ContentReference.Parse(entity.TargetKey);
+                        var targetContent = contentRepository.Get<IContent>(targetContentReference);
+                        entity.TargetName = targetContent.Name;
+                    }
+                }
+                return listResult;
             }
+        }
+
+        private static bool IsContentBestBet(BestBetEntity entity)
+        {
+            return entity.TargetType == PageBestBetSelector || entity.TargetType == CommerceBestBetSelector;
         }
 
         public string Create(BestBetEntity entity)
         {
+            
             var bestBetsController = CreateBestBetsController();
 
             var bestBetModel = new BestBetModel
@@ -60,17 +87,42 @@ namespace Vro.FindExportImport.Stores
                 BestBetTargetDescription = entity.BestBetTargetDescription,
                 Tags = entity.Tags,
                 TargetType = entity.TargetType,
-                
-                // TODO: this causes validation exception if there are best bets with duplicate phrases, but different contents
-                TargetKey = ContentReference.RootPage.ToString(), //we have to replace entity.TargetKey here with some existing ContentReference
-
+                TargetKey = entity.TargetKey,
                 BestBetHasOwnStyle = entity.BestBetHasOwnStyle
             };
-            
+            if (IsContentBestBet(entity))
+            {
+                ConvertTarget(entity, bestBetModel);
+            }
+
             var responseMessage = bestBetsController.Post(bestBetModel);
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;
             return GetIdFromResponse(response);
+        }
+
+        protected virtual void ConvertTarget(BestBetEntity bestBetEntity, BestBetModel bestBetModel)
+        {
+            var searchQuery = SearchClient.Instance
+                .Search<IContent>()
+                .Filter(x => x.Name.Match(bestBetEntity.TargetName));
+
+            if (bestBetEntity.TargetType.Equals(PageBestBetSelector))
+            {
+                searchQuery = searchQuery.Filter(x => !x.ContentLink.ProviderName.Exists());
+            }
+            else if (bestBetEntity.TargetType.Equals(CommerceBestBetSelector))
+            {
+                searchQuery = searchQuery.Filter(x => x.ContentLink.ProviderName.Match("CatalogContent"));
+            }
+
+            var searchResults = searchQuery.Select(c => c.ContentLink).Take(1).GetResult();
+            var contentReference = searchResults.Hits.FirstOrDefault()?.Document;
+            bestBetModel.TargetKey = contentReference?.ToString();
+            if (bestBetModel.TargetKey == null)
+            {
+                throw new ServiceException("Can't find Content with name: "+bestBetEntity.TargetName);
+            }
         }
 
         public void Update(BestBetEntity entity)

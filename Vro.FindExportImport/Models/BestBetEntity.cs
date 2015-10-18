@@ -32,5 +32,10 @@ namespace Vro.FindExportImport.Models
 
         [JsonProperty(PropertyName = "best_bet_has_own_style")]
         public bool BestBetHasOwnStyle { get; set; }
+
+
+        [JsonProperty(PropertyName = "target_name")]
+        public string TargetName { get; set; }
+
     }
 }
