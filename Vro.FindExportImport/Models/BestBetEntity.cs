@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Vro.FindExportImport.Models
 {
     public class BestBetEntity : IOptimizationEntity
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
-        [JsonProperty(PropertyName = "tags")]
-        public List<string> Tags { get; set; }
-
         [JsonProperty(PropertyName = "phrases")]
         public string Phrase { get; set; }
 
@@ -37,5 +27,10 @@ namespace Vro.FindExportImport.Models
         [JsonProperty(PropertyName = "target_name")]
         public string TargetName { get; set; }
 
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        [JsonProperty(PropertyName = "tags")]
+        public List<string> Tags { get; set; }
     }
 }

@@ -1,14 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 using EPiServer;
 using EPiServer.Core;
-using EPiServer.Data.Dynamic;
 using EPiServer.Find;
-using EPiServer.Find.Api.Querying.Filters;
-using EPiServer.Find.Cms;
 using EPiServer.Find.Framework;
 using EPiServer.Find.Json;
 using EPiServer.Find.UI.Controllers;
@@ -23,14 +19,14 @@ namespace Vro.FindExportImport.Stores
     {
         private const string PageBestBetSelector = "PageBestBetSelector";
         private const string CommerceBestBetSelector = "CommerceBestBetSelector";
-        private IContentRepository contentRepository;
+        public JsonSerializer DefaultSerializer { get; set; }
+        private readonly IContentRepository _contentRepository;
+
         public BestBetStore()
         {
             DefaultSerializer = Serializer.CreateDefault();
-            contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
+            _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
         }
-
-        public JsonSerializer DefaultSerializer { get; set; }
 
         public BestBetEntity Get(string id)
         {
@@ -61,7 +57,7 @@ namespace Vro.FindExportImport.Stores
                     if (IsContentBestBet(entity))
                     {
                         var targetContentReference = ContentReference.Parse(entity.TargetKey);
-                        var targetContent = contentRepository.Get<IContent>(targetContentReference);
+                        var targetContent = _contentRepository.Get<IContent>(targetContentReference);
                         entity.TargetName = targetContent.Name;
                     }
                 }
@@ -123,11 +119,6 @@ namespace Vro.FindExportImport.Stores
             {
                 throw new ServiceException("Can't find Content with name: "+bestBetEntity.TargetName);
             }
-        }
-
-        public void Update(BestBetEntity entity)
-        {
-            throw new NotImplementedException();
         }
 
         public void Delete(string id)

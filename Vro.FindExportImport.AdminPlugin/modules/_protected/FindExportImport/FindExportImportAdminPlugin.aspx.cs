@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
-using Castle.Core.Internal;
 using EPiServer.PlugIn;
 using EPiServer.Shell.WebForms;
 
+// ReSharper disable once CheckNamespace
 namespace Vro.FindExportImport.AdminPlugin
 {
     [GuiPlugIn(DisplayName = "Find Export / Import",

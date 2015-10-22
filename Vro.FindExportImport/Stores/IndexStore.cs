@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using EPiServer.Find;
 using EPiServer.Find.Api;
 using EPiServer.Find.Connection;
@@ -111,20 +108,14 @@ namespace Vro.FindExportImport.Stores
             return result;
         }
 
-        public void Update(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Delete(string id)
         {
-            string result = null;
             var url = string.Format(DeleteUrlTemplate, id);
             var request = RequestFactory.CreateRequest(url, HttpVerbs.Delete, null);
             try
             {
                 var responseBody = request.GetResponse();
-                result = GetIdFromResponse(responseBody);
+                GetIdFromResponse(responseBody);
             }
             catch (WebException originalException)
             {
@@ -148,10 +139,12 @@ namespace Vro.FindExportImport.Stores
                     {
                         try
                         {
-                            response = JsonConvert.DeserializeObject<ServiceError>(response).Error;
+                            var errorResponse = JsonConvert.DeserializeObject<ServiceError>(response);
+                            response = errorResponse?.Error;
                         }
-                        catch (Exception)
+                        catch (JsonException)
                         {
+                            // ignored
                         }
                     }
                     message = message + Environment.NewLine + response;

@@ -1,5 +1,4 @@
-﻿using System;
-using Vro.FindExportImport.Models;
+﻿using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Stores
 {
@@ -8,7 +7,6 @@ namespace Vro.FindExportImport.Stores
         T Get(string id);
         ListResult<T> List(string siteId, string language, int @from, int size);
         string Create(T entity);
-        void Update(T entity);
         void Delete(string id);
     }
 }
