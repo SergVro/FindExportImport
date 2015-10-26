@@ -14,7 +14,7 @@ namespace Vro.FindExportImport.Export
         {
             Store = store;
             EntityKey = typeof (T).Name;
-            PageSize = 2;
+            PageSize = 20;
             DefaultSerializer = Serializer.CreateDefault();
         }
 
@@ -36,6 +36,7 @@ namespace Vro.FindExportImport.Export
                 Key = EntityKey,
                 Entities = new List<IOptimizationEntity>()
             };
+
             var page = 0;
             int total;
             do
@@ -45,6 +46,7 @@ namespace Vro.FindExportImport.Export
                 total = result.Total;
                 page++;
             } while (page*PageSize < total);
+
             DefaultSerializer.Serialize(writer, entitySet);
         }
     }

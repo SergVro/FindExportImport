@@ -22,49 +22,49 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::EPiServer.UI.WebControls.TabStrip actionTab;
         
         /// <summary>
-        /// Tab1 control.
+        /// tab1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::EPiServer.UI.WebControls.Tab Tab1;
+        protected global::EPiServer.UI.WebControls.Tab tab1;
         
         /// <summary>
-        /// Tab2 control.
+        /// tab2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::EPiServer.UI.WebControls.Tab Tab2;
+        protected global::EPiServer.UI.WebControls.Tab tab2;
         
         /// <summary>
-        /// Tab3 control.
+        /// tab3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::EPiServer.UI.WebControls.Tab Tab3;
+        protected global::EPiServer.UI.WebControls.Tab tab3;
         
         /// <summary>
-        /// TabView control.
+        /// tabView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel TabView;
+        protected global::System.Web.UI.WebControls.Panel tabView;
         
         /// <summary>
-        /// Export control.
+        /// exportPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Export;
+        protected global::System.Web.UI.WebControls.Panel exportPanel;
         
         /// <summary>
         /// exportSite control.
@@ -103,13 +103,13 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::EPiServer.UI.WebControls.ToolButton exportButton;
         
         /// <summary>
-        /// Import control.
+        /// importPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Import;
+        protected global::System.Web.UI.WebControls.Panel importPanel;
         
         /// <summary>
         /// importSite control.
@@ -157,13 +157,13 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::EPiServer.UI.WebControls.ToolButton importButton;
         
         /// <summary>
-        /// Delete control.
+        /// deletePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Delete;
+        protected global::System.Web.UI.WebControls.Panel deletePanel;
         
         /// <summary>
         /// deleteSite control.
@@ -211,12 +211,12 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::System.Web.UI.WebControls.Literal deleteResults;
         
         /// <summary>
-        /// ToolButton1 control.
+        /// deleteButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::EPiServer.UI.WebControls.ToolButton ToolButton1;
+        protected global::EPiServer.UI.WebControls.ToolButton deleteButton;
     }
 }

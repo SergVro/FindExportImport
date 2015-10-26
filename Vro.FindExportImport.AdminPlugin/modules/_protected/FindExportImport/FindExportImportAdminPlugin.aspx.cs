@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
+using EPiServer.Logging.Compatibility;
 using EPiServer.PlugIn;
+using EPiServer.Security;
 using EPiServer.Shell.WebForms;
 
 // ReSharper disable once CheckNamespace
 namespace Vro.FindExportImport.AdminPlugin
 {
     [GuiPlugIn(DisplayName = "Find Export / Import",
-        Description = "Find Export/Import allows to export and import Find optimizations",
+        Description = "Find Export / Import allows to export and import Find optimizations",
         Area = PlugInArea.AdminMenu, UrlFromModuleFolder = "FindExportImportAdminPlugin.aspx")]
     public partial class FindExportImportAdminPlugin : WebFormsBase
     {
         private ExportManager _exportManager;
         private ImportManager _importManager;
+        private ILog _log = LogManager.GetLogger(typeof (FindExportImportAdminPlugin));
 
         protected override void OnInit(EventArgs e)
         {
             _importManager = new ImportManager();
             _exportManager = new ExportManager();
 
-            CreateCheckBoxes(exporters, _exportManager.GetExporters().Select(exporter => exporter.EntityKey));
-            CreateCheckBoxes(deleters, _importManager.GetImporters().Select(importer => importer.EntityKey));
+            CreateCheckBoxes(exporters, _exportManager.GetExporters().Select(exporter => exporter.EntityKey), true);
+            CreateCheckBoxes(deleters, _importManager.GetImporters().Select(importer => importer.EntityKey), false);
 
             _exportManager.GetSites().ForEach(s => exportSite.Items.Add(new ListItem(s.Name, s.Id)));
             _exportManager.GetSites().ForEach(s => importSite.Items.Add(new ListItem(s.Name, s.Id)));
@@ -37,20 +40,24 @@ namespace Vro.FindExportImport.AdminPlugin
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
             importResults.Text = "";
             importResultsPanel.Visible = false;
-            SystemMessageContainer.Heading = "Find Export / Import";
-            
+
+            deleteResults.Text = "";
+            deleteResultsPanel.Visible = false;
+
+            SystemMessageContainer.Heading = "Find Export / Import";            
         }
 
-        private void CreateCheckBoxes(Panel container, IEnumerable<string> ids)
+        private void CreateCheckBoxes(Panel container, IEnumerable<string> ids, bool defaultChecked)
         {
             var checkBoxes = ids
                 .Select(id => new CheckBox
                 {
                     ID = container.ID + id,
                     Text = Helpers.GetEntityName(id),
-                    Checked = true
+                    Checked = defaultChecked
                 });
 
             foreach (var checkBox in checkBoxes)
@@ -79,6 +86,8 @@ namespace Vro.FindExportImport.AdminPlugin
         protected void ExportClick(object sender, EventArgs e)
         {
             var exportersList = GetCheckedIds(exporters);
+            _log.DebugFormat("Export EPiServer Find optimizations. User {0}. Optimizations: {1}, site: {2}, language: {3}", 
+                PrincipalInfo.Current.Name, string.Join(",", exportersList), exportSite.SelectedItem.Text, exportLanguage.SelectedItem.Text);
             Response.Clear();
             Response.ContentType = "applicaiton/json";
             Response.AddHeader("content-disposition", "attachment; filename=FindOptimizations.json");
@@ -93,20 +102,23 @@ namespace Vro.FindExportImport.AdminPlugin
                 SystemMessageContainer.Message = "No file selected for import";
                 return;
             }
-
             var resultsMessage = _importManager.ImportFromStream(importSite.SelectedValue, Request.Files[0].InputStream);
+            resultsMessage = !string.IsNullOrWhiteSpace(resultsMessage) ? resultsMessage.Replace(Environment.NewLine, "<br>") : "Import complete";
             importResultsPanel.Visible = true;
-            importResults.Text = !string.IsNullOrWhiteSpace(resultsMessage) ? resultsMessage.Replace(Environment.NewLine, "<br>") : "Import complete";
-            
+            importResults.Text = resultsMessage;
+            _log.DebugFormat("Import EPiServer Find optimizations complete. User: {0}. Site: {1}. Results: {2}.", 
+                PrincipalInfo.Current.Name, importSite.SelectedItem.Text, resultsMessage);
         }
 
         protected void DeleteClick(object sender, EventArgs e)
         {
             var deletersList = GetCheckedIds(deleters);
+            _log.WarnFormat("Deleting EPiServer Find optimizations. User: {0}. Optimizations: {1}, site: {2}, language: {3}", 
+                PrincipalInfo.Current.Name, string.Join(",", deletersList), deleteSite.SelectedItem.Text, deleteLanguage.SelectedItem.Text);
+
             _importManager.Delete(deletersList, deleteSite.SelectedValue, deleteLanguage.SelectedValue);
             deleteResultsPanel.Visible = true;
             deleteResults.Text = "Deletion complete";
-
         }
     }
 }

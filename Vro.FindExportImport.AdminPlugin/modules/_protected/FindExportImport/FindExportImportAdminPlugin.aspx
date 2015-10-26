@@ -3,12 +3,12 @@
 <%@ Register TagPrefix="EPiServerUI" Namespace="EPiServer.UI.WebControls" Assembly="EPiServer.UI, Version=7.9.1.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7" %>
 <asp:Content ContentPlaceHolderID="MainRegion" runat="server">
     <EPiServerUI:TabStrip runat="server" ID="actionTab" GeneratesPostBack="True" TargetID="TabView">
-		<EPiServerUI:Tab Text="Export" runat="server" ID="Tab1" sticky="True" />
-		<EPiServerUI:Tab Text="Import" runat="server" ID="Tab2" sticky="True" />
-		<EPiServerUI:Tab Text="Delete" runat="server" ID="Tab3" sticky="True" />
+		<EPiServerUI:Tab Text="Export" runat="server" ID="tab1" sticky="True" />
+		<EPiServerUI:Tab Text="Import" runat="server" ID="tab2" sticky="True" />
+		<EPiServerUI:Tab Text="Delete" runat="server" ID="tab3" sticky="True" />
     </EPiServerUI:TabStrip>
-    <asp:Panel ID="TabView" runat="server">
-        <asp:Panel ID="Export" runat="server">
+    <asp:Panel ID="tabView" runat="server">
+        <asp:Panel ID="exportPanel" runat="server">
             <div class="epi-formArea epi-padding">
                 <div class="epi-size15">
                     <h2>Here you can export Find optimizations to a JSON file</h2> 
@@ -31,7 +31,7 @@
 
             </div>
         </asp:Panel>
-        <asp:Panel ID="Import" runat="server">
+        <asp:Panel ID="importPanel" runat="server">
             <div class="epi-formArea epi-padding">
                 <div class="epi-size15">
                     <h2>Here you can import Find optimizations from a JSON file.</h2>
@@ -53,7 +53,7 @@
                         runat="server" CausesValidation="false" /> 
             </div>
         </asp:Panel>
-                <asp:Panel ID="Delete" runat="server">
+                <asp:Panel ID="deletePanel" runat="server" >
             <div class="epi-formArea epi-padding">
                 <div class="epi-size15">
                     <h2>Here you can delete Find optimizations. </h2> 
@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="epi-buttonContainer">
-                <EPiServerUI:ToolButton ID="ToolButton1" Text="Delete"
+                <EPiServerUI:ToolButton ID="deleteButton" Text="Delete"
                         ToolTip="Re-index selected sites" SkinID="Delete" OnClick="DeleteClick" OnClientClick="return confirm('Are you sure want to delete selected optimizations?')"
                         runat="server" CausesValidation="false" /> 
 

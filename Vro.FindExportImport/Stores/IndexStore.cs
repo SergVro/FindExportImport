@@ -26,7 +26,14 @@ namespace Vro.FindExportImport.Stores
         public IndexStore(string entityUrl)
         {
             var config = Configuration.GetConfiguration();
-            BaseUrl = $"{config.ServiceUrl}{config.DefaultIndex}/{entityUrl}";
+            var serviceUrl = config.ServiceUrl.Trim();
+            if (serviceUrl.EndsWith("/"))
+            {
+                serviceUrl = serviceUrl.Remove(serviceUrl.Length - 1);
+            }
+            var index = config.DefaultIndex;
+
+            BaseUrl = $"{serviceUrl}/{index}/{entityUrl}";
             ListUrlTemplate = BaseUrl + "/list?from={0}&size={1}&tags=siteid:{2},language:{3}";
             GetUrlTemplate = BaseUrl + "/{0}";
             DeleteUrlTemplate = BaseUrl + "/{0}";
