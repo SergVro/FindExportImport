@@ -200,6 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Export\BestBetExporter.cs" />
+    <Compile Include="FindConfiguration.cs" />
     <Compile Include="Import\BestBetImporter.cs" />
     <Compile Include="Models\TagSelectionModel.cs" />
     <Compile Include="Models\StatusResponse.cs" />

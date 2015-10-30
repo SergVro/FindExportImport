@@ -23,9 +23,8 @@ namespace Vro.FindExportImport.Stores
         public IJsonRequestFactory RequestFactory { get; set; }
         public JsonSerializer DefaultSerializer { get; set; }
 
-        public IndexStore(string entityUrl)
+        public IndexStore(string entityUrl, FindConfiguration config)
         {
-            var config = Configuration.GetConfiguration();
             var serviceUrl = config.ServiceUrl.Trim();
             if (serviceUrl.EndsWith("/"))
             {

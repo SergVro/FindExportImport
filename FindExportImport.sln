@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vro.FindExportImport", "Vro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vro.FindExportImport.AdminPlugin", "Vro.FindExportImport.AdminPlugin\Vro.FindExportImport.AdminPlugin.csproj", "{CFAF92E7-492B-470A-9C55-CB5132B2C86A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vro.FindExportImport.Tests", "Vro.FindExportImport.Tests\Vro.FindExportImport.Tests.csproj", "{560C539A-4471-4AB0-A4A2-FB10FA4D9D7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{CFAF92E7-492B-470A-9C55-CB5132B2C86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFAF92E7-492B-470A-9C55-CB5132B2C86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFAF92E7-492B-470A-9C55-CB5132B2C86A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{560C539A-4471-4AB0-A4A2-FB10FA4D9D7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{560C539A-4471-4AB0-A4A2-FB10FA4D9D7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{560C539A-4471-4AB0-A4A2-FB10FA4D9D7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{560C539A-4471-4AB0-A4A2-FB10FA4D9D7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
