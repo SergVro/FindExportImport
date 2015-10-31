@@ -10,28 +10,7 @@ namespace Vro.FindExportImport.Tests
 
     public class IndexStoreTests
     {
-
-        private Mock<IJsonRequestFactory> GetMockRequestFactory(string response, Action<string, HttpVerbs, int?> callback)
-        {
-            StoreFactory.Config = new FindConfiguration
-            {
-                ServiceUrl = "http://myfindurl",
-                DefaultIndex = "myindex"
-            };
-            var mockJsonRequest = new Mock<IJsonRequest>();
-            var mockRequestFactory = new Mock<IJsonRequestFactory>();
-            var setup = mockRequestFactory.Setup(f => f.CreateRequest(It.IsAny<string>(), It.IsAny<HttpVerbs>(), null))
-                .Returns(mockJsonRequest.Object);
-
-            if (callback != null)
-            {
-                setup.Callback(callback);
-            }                
-
-            mockJsonRequest.Setup(r => r.GetResponse()).Returns(response);
-
-            return mockRequestFactory;
-        }
+        private readonly TestHelpers _testHelpers = new TestHelpers();
 
         [Fact]
         public void AutocompleteStoreGetByIdTest()
@@ -39,7 +18,7 @@ namespace Vro.FindExportImport.Tests
             // Arrange           
             string requestUrl = "";
             HttpVerbs? httpVerb = null;
-            var mockRequestFactory = GetMockRequestFactory(
+            var mockRequestFactory = _testHelpers.GetMockRequestFactory(
                 @"{ 
                     'id':'testId',
                     'query':'testQuery',
@@ -74,7 +53,7 @@ namespace Vro.FindExportImport.Tests
             // Arrange           
             string requestUrl = "";
             HttpVerbs? httpVerb = null;
-            var mockRequestFactory = GetMockRequestFactory(
+            var mockRequestFactory = _testHelpers.GetMockRequestFactory(
                 @"{ 
                     'total':2,
                     'status': 'ok',
@@ -122,7 +101,7 @@ namespace Vro.FindExportImport.Tests
             string requestUrl = "";
             HttpVerbs? httpVerb = null;
 
-            var mockRequestFactory = GetMockRequestFactory(
+            var mockRequestFactory = _testHelpers.GetMockRequestFactory(
                 @"{'status':'ok','id':'testId'}",
                 ((url, verbs, timeout) => {
                     requestUrl = url;

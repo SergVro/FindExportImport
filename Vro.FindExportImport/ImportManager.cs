@@ -11,9 +11,20 @@ namespace Vro.FindExportImport
 {
     public class ImportManager
     {
+        private readonly List<IImporter> _importers;
+
+        public ImportManager()
+        {
+            _importers = ServiceLocator.Current.GetAllInstances<IImporter>().ToList();
+        }
+
+        public ImportManager(List<IImporter> importers)
+        {
+            _importers = importers;
+        }
+
         public string ImportFromStream(string siteId, Stream inputStream)
         {
-            var importers = GetImporters();
             var serializer = Serializer.CreateDefault();
             var result = "";
             using (var streamReader = new StreamReader(inputStream))
@@ -23,7 +34,7 @@ namespace Vro.FindExportImport
                     var importedData = serializer.Deserialize<IEnumerable<EntitySet<IOptimizationEntity>>>(jsonReader);
                     foreach (var importedEntities in importedData)
                     {
-                        var importer = importers.FirstOrDefault(i => i.EntityKey.Equals(importedEntities.Key));
+                        var importer = _importers.FirstOrDefault(i => i.EntityKey.Equals(importedEntities.Key));
                         result += importer?.Import(siteId, importedEntities.Entities);
                     }
                 }
@@ -33,12 +44,12 @@ namespace Vro.FindExportImport
 
         public List<IImporter> GetImporters()
         {
-            return ServiceLocator.Current.GetAllInstances<IImporter>().ToList();
+            return _importers;
         }
 
         public void Delete(List<string> entityKeys, string siteId, string language)
         {
-            var importers = GetImporters().Where(i => entityKeys.Contains(i.EntityKey)).ToList();
+            var importers = _importers.Where(i => entityKeys.Contains(i.EntityKey)).ToList();
             importers.ForEach(i => i.DeleteAll(siteId, language));
         }
     }

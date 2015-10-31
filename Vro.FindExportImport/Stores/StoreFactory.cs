@@ -1,4 +1,6 @@
-﻿using EPiServer.Find;
+﻿using EPiServer;
+using EPiServer.Find;
+using EPiServer.ServiceLocation;
 using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Stores
@@ -31,7 +33,7 @@ namespace Vro.FindExportImport.Stores
             }
             if (typeof(BestBetEntity) == typeof(T))
             {
-                return (IStore<T>) new BestBetStore();
+                return (IStore<T>) new BestBetStore(new BestBetControllerDefaultFactory(), ServiceLocator.Current.GetInstance<IContentRepository>());
             }
             return null;
         }

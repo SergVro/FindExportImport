@@ -15,22 +15,82 @@ using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Stores
 {
+    public interface IBestBetsController
+    {
+        HttpResponseMessage Get(string id);
+        HttpResponseMessage GetList(int from, int size, string tags);
+        HttpResponseMessage Post(BestBetModel model);
+        HttpResponseMessage Delete(string id);
+    }
+
+    public interface IBestBetControllerFactory
+    {
+        IBestBetsController CreateController();
+    }
+
+    public class BestBetControllerDefaultFactory : IBestBetControllerFactory
+    {
+        public IBestBetsController CreateController()
+        {
+            var bestBetsController = new BestBetsController
+            {
+                Request = new HttpRequestMessage(),
+                Configuration = new HttpConfiguration()
+            };
+
+            return new BestBetsControllerWrapper(bestBetsController);
+        }
+    }
+
+    public class BestBetsControllerWrapper : IBestBetsController
+    {
+        private readonly BestBetsController _wrappedObject;
+
+        public BestBetsControllerWrapper(BestBetsController wrappedObject)
+        {
+            _wrappedObject = wrappedObject;
+        }
+
+        public HttpResponseMessage Get(string id)
+        {
+            return _wrappedObject.Get(id);
+        }
+
+        public HttpResponseMessage GetList(int @from, int size, string tags)
+        {
+            return _wrappedObject.GetList(tags, from, size);
+        }
+
+        public HttpResponseMessage Post(BestBetModel model)
+        {
+            return _wrappedObject.Post(model);
+        }
+
+        public HttpResponseMessage Delete(string id)
+        {
+            return _wrappedObject.Delete(id);
+        }
+    }
+
+
     public class BestBetStore : IStore<BestBetEntity>
     {
         private const string PageBestBetSelector = "PageBestBetSelector";
         private const string CommerceBestBetSelector = "CommerceBestBetSelector";
         public JsonSerializer DefaultSerializer { get; set; }
         private readonly IContentRepository _contentRepository;
+        private readonly IBestBetControllerFactory _bestBetControllerFactory;
 
-        public BestBetStore()
+        public BestBetStore(IBestBetControllerFactory bestBetControllerFactory, IContentRepository contentRepository)
         {
+            _bestBetControllerFactory = bestBetControllerFactory;
             DefaultSerializer = Serializer.CreateDefault();
-            _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
+            _contentRepository = contentRepository;
         }
 
         public BestBetEntity Get(string id)
         {
-            var bestBetsController = CreateBestBetsController();
+            var bestBetsController = _bestBetControllerFactory.CreateController();
             var responseMessage = bestBetsController.Get(id);
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;
@@ -43,7 +103,7 @@ namespace Vro.FindExportImport.Stores
 
         public ListResult<BestBetEntity> List(string siteId, string language, int @from, int size)
         {
-            var bestBetsController = CreateBestBetsController();
+            var bestBetsController = _bestBetControllerFactory.CreateController();
             var responseMessage = bestBetsController.GetList(from: from, size: size, 
                 tags: $"siteid:{siteId},language:{language}");
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
@@ -73,7 +133,7 @@ namespace Vro.FindExportImport.Stores
         public string Create(BestBetEntity entity)
         {
             
-            var bestBetsController = CreateBestBetsController();
+            var bestBetsController = _bestBetControllerFactory.CreateController();
 
             var bestBetModel = new BestBetModel
             {
@@ -123,18 +183,8 @@ namespace Vro.FindExportImport.Stores
 
         public void Delete(string id)
         {
-            var bestBetsController = CreateBestBetsController();
+            var bestBetsController = _bestBetControllerFactory.CreateController();
             bestBetsController.Delete(id);
-        }
-
-        private static BestBetsController CreateBestBetsController()
-        {
-            var bestBetsController = new BestBetsController
-            {
-                Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
-            };
-            return bestBetsController;
         }
 
         protected string GetIdFromResponse(string responseBody)

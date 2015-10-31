@@ -13,9 +13,21 @@ namespace Vro.FindExportImport
 {
     public class ExportManager
     {
+        private readonly List<IExporter> _exporters;
+
+        public ExportManager()
+        {
+            _exporters = ServiceLocator.Current.GetAllInstances<IExporter>().ToList();
+        }
+
+        public ExportManager(List<IExporter> exporters)
+        {
+            _exporters = exporters;
+        }
+
         public void ExportToStream(List<string> selectedExporters, string siteId, string language, Stream stream)
         {
-            var exporters = GetExporters().Where(e => selectedExporters.Contains(e.EntityKey));
+            var exporters = _exporters.Where(e => selectedExporters.Contains(e.EntityKey));
 
             using (var streamWriter = new StreamWriter(stream))
             {
@@ -31,9 +43,9 @@ namespace Vro.FindExportImport
             }
         }
 
-        public IEnumerable<IExporter> GetExporters()
+        public List<IExporter> GetExporters()
         {
-            return ServiceLocator.Current.GetAllInstances<IExporter>();
+            return _exporters;
         }
 
         public List<TagSelectionModel> GetSites()
