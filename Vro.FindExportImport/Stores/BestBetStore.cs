@@ -1,85 +1,24 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Web.Http;
+using System.Net;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Find;
 using EPiServer.Find.Framework;
 using EPiServer.Find.Json;
-using EPiServer.Find.UI.Controllers;
 using EPiServer.Find.UI.Models;
-using EPiServer.ServiceLocation;
 using Newtonsoft.Json;
 using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Stores
 {
-    public interface IBestBetsController
-    {
-        HttpResponseMessage Get(string id);
-        HttpResponseMessage GetList(int from, int size, string tags);
-        HttpResponseMessage Post(BestBetModel model);
-        HttpResponseMessage Delete(string id);
-    }
-
-    public interface IBestBetControllerFactory
-    {
-        IBestBetsController CreateController();
-    }
-
-    public class BestBetControllerDefaultFactory : IBestBetControllerFactory
-    {
-        public IBestBetsController CreateController()
-        {
-            var bestBetsController = new BestBetsController
-            {
-                Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
-            };
-
-            return new BestBetsControllerWrapper(bestBetsController);
-        }
-    }
-
-    public class BestBetsControllerWrapper : IBestBetsController
-    {
-        private readonly BestBetsController _wrappedObject;
-
-        public BestBetsControllerWrapper(BestBetsController wrappedObject)
-        {
-            _wrappedObject = wrappedObject;
-        }
-
-        public HttpResponseMessage Get(string id)
-        {
-            return _wrappedObject.Get(id);
-        }
-
-        public HttpResponseMessage GetList(int @from, int size, string tags)
-        {
-            return _wrappedObject.GetList(tags, from, size);
-        }
-
-        public HttpResponseMessage Post(BestBetModel model)
-        {
-            return _wrappedObject.Post(model);
-        }
-
-        public HttpResponseMessage Delete(string id)
-        {
-            return _wrappedObject.Delete(id);
-        }
-    }
-
-
     public class BestBetStore : IStore<BestBetEntity>
     {
         private const string PageBestBetSelector = "PageBestBetSelector";
         private const string CommerceBestBetSelector = "CommerceBestBetSelector";
-        public JsonSerializer DefaultSerializer { get; set; }
-        private readonly IContentRepository _contentRepository;
         private readonly IBestBetControllerFactory _bestBetControllerFactory;
+        private readonly IContentRepository _contentRepository;
 
         public BestBetStore(IBestBetControllerFactory bestBetControllerFactory, IContentRepository contentRepository)
         {
@@ -88,51 +27,57 @@ namespace Vro.FindExportImport.Stores
             _contentRepository = contentRepository;
         }
 
+        public JsonSerializer DefaultSerializer { get; set; }
+
         public BestBetEntity Get(string id)
         {
             var bestBetsController = _bestBetControllerFactory.CreateController();
             var responseMessage = bestBetsController.Get(id);
+            if (responseMessage.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;
             using (var reader = new StringReader(response))
             {
                 var jsonReader = new JsonTextReader(reader);
-                return DefaultSerializer.Deserialize<BestBetEntity>(jsonReader);
+                var bestBetItemModel = DefaultSerializer.Deserialize<BestBetItemModel>(jsonReader);
+                if (bestBetItemModel == null)
+                {
+                    return null;
+                }
+
+                var bestBetModel = bestBetItemModel.Item;
+                var bestBetEntity = ConvertToBestBetEntity(bestBetModel);
+                return bestBetEntity;
             }
         }
 
-        public ListResult<BestBetEntity> List(string siteId, string language, int @from, int size)
+        public ListResult<BestBetEntity> List(string siteId, string language, int from, int size)
         {
             var bestBetsController = _bestBetControllerFactory.CreateController();
-            var responseMessage = bestBetsController.GetList(from: from, size: size, 
-                tags: $"siteid:{siteId},language:{language}");
+            var responseMessage = bestBetsController.GetList(from, size, $"siteid:{siteId},language:{language}");
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;
+            var listResult = new ListResult<BestBetEntity> {Hits = new List<BestBetEntity>()};
             using (var reader = new StringReader(response))
             {
                 var jsonReader = new JsonTextReader(reader);
-                var listResult = DefaultSerializer.Deserialize<ListResult<BestBetEntity>>(jsonReader);
-                foreach (var entity in listResult.Hits)
+                var bestBetsModel = DefaultSerializer.Deserialize<BestBetsModel>(jsonReader);
+                listResult.Status = bestBetsModel.Status;
+                listResult.Total = bestBetsModel.Total;
+                foreach (var model in bestBetsModel.Hits)
                 {
-                    if (IsContentBestBet(entity))
-                    {
-                        var targetContentReference = ContentReference.Parse(entity.TargetKey);
-                        var targetContent = _contentRepository.Get<IContent>(targetContentReference);
-                        entity.TargetName = targetContent.Name;
-                    }
+                    var entity = ConvertToBestBetEntity(model);
+                    listResult.Hits.Add(entity);
                 }
                 return listResult;
             }
         }
 
-        private static bool IsContentBestBet(BestBetEntity entity)
-        {
-            return entity.TargetType == PageBestBetSelector || entity.TargetType == CommerceBestBetSelector;
-        }
-
         public string Create(BestBetEntity entity)
         {
-            
             var bestBetsController = _bestBetControllerFactory.CreateController();
 
             var bestBetModel = new BestBetModel
@@ -157,6 +102,42 @@ namespace Vro.FindExportImport.Stores
             return GetIdFromResponse(response);
         }
 
+        public void Delete(string id)
+        {
+            var bestBetsController = _bestBetControllerFactory.CreateController();
+            bestBetsController.Delete(id);
+        }
+
+        private BestBetEntity ConvertToBestBetEntity(BestBetModel bestBetModel)
+        {
+            var bestBetEntity = new BestBetEntity
+            {
+                Id = bestBetModel.Id,
+                Phrase = bestBetModel.Phrases,
+                BestBetHasOwnStyle = bestBetModel.BestBetHasOwnStyle,
+                BestBetTargetDescription = bestBetModel.BestBetTargetDescription,
+                BestBetTargetTitle = bestBetModel.BestBetTargetTitle,
+                Tags = bestBetModel.Tags.ToList(),
+                TargetType = bestBetModel.TargetType,
+                TargetKey = bestBetModel.TargetKey
+            };
+            if (IsContentBestBet(bestBetEntity))
+            {
+                var targetContentReference = ContentReference.Parse(bestBetEntity.TargetKey);
+                var targetContent = _contentRepository.Get<IContent>(targetContentReference);
+                if (targetContent != null)
+                {
+                    bestBetEntity.TargetName = targetContent.Name;
+                }
+            }
+            return bestBetEntity;
+        }
+
+        private static bool IsContentBestBet(BestBetEntity entity)
+        {
+            return entity.TargetType == PageBestBetSelector || entity.TargetType == CommerceBestBetSelector;
+        }
+
         protected virtual void ConvertTarget(BestBetEntity bestBetEntity, BestBetModel bestBetModel)
         {
             var searchQuery = SearchClient.Instance
@@ -177,14 +158,8 @@ namespace Vro.FindExportImport.Stores
             bestBetModel.TargetKey = contentReference?.ToString();
             if (bestBetModel.TargetKey == null)
             {
-                throw new ServiceException("Can't find Content with name: "+bestBetEntity.TargetName);
+                throw new ServiceException("Can't find Content with name: " + bestBetEntity.TargetName);
             }
-        }
-
-        public void Delete(string id)
-        {
-            var bestBetsController = _bestBetControllerFactory.CreateController();
-            bestBetsController.Delete(id);
         }
 
         protected string GetIdFromResponse(string responseBody)
