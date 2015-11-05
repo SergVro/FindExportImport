@@ -7,6 +7,5 @@ namespace Vro.FindExportImport.Import
     {
         string EntityKey { get; set; }
         string Import(string siteId, List<IOptimizationEntity> entities);
-        void DeleteAll(string siteId, string language);
     }
 }

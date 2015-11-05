@@ -10,27 +10,28 @@ namespace Vro.FindExportImport.Export
 {
     public abstract class ExporterBase<T> : IExporter where T : IOptimizationEntity
     {
-        protected ExporterBase(IStore<T> store)
+        protected ExporterBase(IStore<T> store, string uiUrl)
         {
+            if (store == null)
+            {
+                throw new ArgumentNullException(nameof(store));
+            }
+
             Store = store;
+            UiUrl = uiUrl;
             EntityKey = typeof (T).Name;
             PageSize = 20;
             DefaultSerializer = Serializer.CreateDefault();
         }
 
-        public IStore<T> Store { get; set; }
-        public string Url { get; set; }
+        public IStore<T> Store { get; }
         public int PageSize { get; set; }
         public JsonSerializer DefaultSerializer { get; set; }
         public string EntityKey { get; set; }
+        public string UiUrl { get; }
 
         public virtual void WriteToStream(string siteId, string language, JsonWriter writer)
         {
-            if (Store == null)
-            {
-                throw new InvalidOperationException("Store property is not set");
-            }
-
             var entitySet = new EntitySet<IOptimizationEntity>
             {
                 Key = EntityKey,
@@ -48,6 +49,27 @@ namespace Vro.FindExportImport.Export
             } while (page*PageSize < total);
 
             DefaultSerializer.Serialize(writer, entitySet);
+        }
+
+        public int GetTotalCount(string siteId, string language)
+        {
+            var result = Store.List(siteId, language, 0, 0);
+            return result.Total;
+        }
+
+
+        public void DeleteAll(string siteId, string language)
+        {
+            int total;
+            do
+            {
+                var listToDelete = Store.List(siteId, language, 0, PageSize);
+                foreach (var hit in listToDelete.Hits)
+                {
+                    Store.Delete(hit.Id);
+                }
+                total = listToDelete.Total;
+            } while (total > 0);
         }
     }
 }

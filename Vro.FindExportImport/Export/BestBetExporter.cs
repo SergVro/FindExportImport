@@ -7,7 +7,7 @@ namespace Vro.FindExportImport.Export
     [ServiceConfiguration(typeof (IExporter))]
     public class BestBetExporter : ExporterBase<BestBetEntity>
     {
-        public BestBetExporter() : base(StoreFactory.GetStore<BestBetEntity>())
+        public BestBetExporter() : base(StoreFactory.GetStore<BestBetEntity>(), "#manage/optimization/bestbets")
         {
         }
     }

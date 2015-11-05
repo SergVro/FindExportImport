@@ -13,12 +13,16 @@ namespace Vro.FindExportImport.Import
     {
         protected ImporterBase(IStore<T> store)
         {
+            if (store == null)
+            {
+                throw new ArgumentNullException(nameof(store));
+            }
             Store = store;
             EntityKey = typeof (T).Name;
             DefaultSerializer = Serializer.CreateDefault();
         }
 
-        public IStore<T> Store { get; set; }
+        public IStore<T> Store { get; }
         public JsonSerializer DefaultSerializer { get; }
         public string EntityKey { get; set; }
 
@@ -42,20 +46,6 @@ namespace Vro.FindExportImport.Import
             return resultMessageString;
         }
 
-        public void DeleteAll(string siteId, string language)
-        {
-            int pageSize = 50;
-            int total;
-            do
-            {
-                var listToDelete = Store.List(siteId, language, 0, pageSize);
-                foreach (var hit in listToDelete.Hits)
-                {
-                    Store.Delete(hit.Id);
-                }
-                total = listToDelete.Total;
-            } while (total > 0);
-        }
 
         public void UpdateSiteId(string siteId, IOptimizationEntity entity)
         {

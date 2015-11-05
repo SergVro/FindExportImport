@@ -236,9 +236,15 @@
     <Compile Include="modules\_protected\FindExportImport\FindExportImportAdminPlugin.aspx.designer.cs">
       <DependentUpon>FindExportImportAdminPlugin.aspx</DependentUpon>
     </Compile>
+    <Compile Include="modules\_protected\FindExportImport\FindExportImportApi.asmx.cs">
+      <DependentUpon>FindExportImportApi.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="modules\_protected\FindExportImport\FindExportImportApi.asmx" />
+    <Content Include="modules\_protected\FindExportImport\Scripts\AdminPlugin.js" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -288,7 +294,7 @@
     <!-- Copy project output to the site modulesbin folder -->
     <ItemGroup>
       <BinFilesToCopy Include="$(OutputPath)Vro*.*" />
-      <ModuleFilesToCopy Include="$(MSBuildProjectDirectory)\modules\_protected\FindExportImport\*.*" />
+      <ModuleFilesToCopy Include="$(MSBuildProjectDirectory)\modules\_protected\FindExportImport\**\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(BinFilesToCopy)" DestinationFolder="$(MSBuildProjectDirectory)\..\TestSite\bin\" />
     <Copy SourceFiles="@(ModuleFilesToCopy)" DestinationFolder="$(MSBuildProjectDirectory)\..\TestSite\modules\_protected\FindExportImport\" />

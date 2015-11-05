@@ -47,10 +47,6 @@ namespace Vro.FindExportImport
             return _importers;
         }
 
-        public void Delete(List<string> entityKeys, string siteId, string language)
-        {
-            var importers = _importers.Where(i => entityKeys.Contains(i.EntityKey)).ToList();
-            importers.ForEach(i => i.DeleteAll(siteId, language));
-        }
+      
     }
 }

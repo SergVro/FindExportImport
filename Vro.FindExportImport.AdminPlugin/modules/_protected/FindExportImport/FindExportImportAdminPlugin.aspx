@@ -10,18 +10,23 @@
     <asp:Panel ID="tabView" runat="server">
         <asp:Panel ID="exportPanel" runat="server">
             <div class="epi-formArea epi-padding">
-                <div class="epi-size15">
+                <div class="epi-size25">
                     <h2>Here you can export Find optimizations to a JSON file</h2> 
                     <p>
-                        Please select a site to export: <asp:DropDownList runat="server" ID="exportSite" AutoPostBack="False"/>
+                        <asp:Label runat="server" Text="Please select a site for optimizations to export:" AssociatedControlID="exportSite"></asp:Label>
+                        <asp:DropDownList runat="server" ID="exportSite" AutoPostBack="False"/>
                     </p>
                     <p>
-                        Please select a language to export: <asp:DropDownList runat="server" ID="exportLanguage" AutoPostBack="False"/>
+                        <asp:Label runat="server" Text="Please select a language for optimizations to export:" AssociatedControlID="exportLanguage"></asp:Label>
+                        <asp:DropDownList runat="server" ID="exportLanguage" AutoPostBack="False"/>
                     </p>
                     <p>
-                        Please select optimizations to export form the list below:
+                        Please select optimization types to export form the list below:
                     </p>
-                    <asp:Panel runat="server" ID="exporters"></asp:Panel>        
+                    <asp:Panel runat="server" ID="exportersPanel"></asp:Panel>        
+                    <asp:Panel runat="server" CssClass="EP-systemMessage" ID="exportResultPanel" Visible="False">
+	                    <asp:Literal runat="server" Text="" ID="exportResults" />
+	                </asp:Panel>
                 </div>
             </div>
             <div class="epi-buttonContainer">
@@ -33,10 +38,11 @@
         </asp:Panel>
         <asp:Panel ID="importPanel" runat="server">
             <div class="epi-formArea epi-padding">
-                <div class="epi-size15">
+                <div class="epi-size25">
                     <h2>Here you can import Find optimizations from a JSON file.</h2>
                      <p>
-                        Please select a site to import optimizations: <asp:DropDownList runat="server" ID="importSite" AutoPostBack="False"/>
+                        <asp:Label runat="server" Text="Please select a site to import optimizations:" AssociatedControlID="importSite"></asp:Label>
+                        <asp:DropDownList runat="server" ID="importSite" AutoPostBack="False"/>
                     </p>
                     <div>
                         <asp:Label runat="server" AssociatedControlID="fileToImport" Text="Select a file to import" />
@@ -55,25 +61,30 @@
         </asp:Panel>
                 <asp:Panel ID="deletePanel" runat="server" >
             <div class="epi-formArea epi-padding">
-                <div class="epi-size15">
+                <div class="epi-size25">
                     <h2>Here you can delete Find optimizations. </h2> 
                     <b style="color:red">There is no way to restore deleted optimizations.</b>
                     <p>
-                        Please select a site for optimizations to delete: <asp:DropDownList runat="server" ID="deleteSite" AutoPostBack="False"/>
+                        <asp:Label runat="server" Text="Please select a site for optimizations to delete:" AssociatedControlID="deleteSite"></asp:Label>
+                        <asp:DropDownList runat="server" ID="deleteSite" AutoPostBack="False"/>
                     </p>
                     <p>
-                        Please select a language for optimizations to delete: <asp:DropDownList runat="server" ID="deleteLanguage" AutoPostBack="False"/>
+                        <asp:Label runat="server" Text="Please select a language for optimizations to delete:" AssociatedControlID="deleteLanguage"></asp:Label>
+                        <asp:DropDownList runat="server" ID="deleteLanguage" AutoPostBack="False"/>
                     </p>
                     <p>
                         Please select optimization types to delete form the list below:
                     </p>
-                    <asp:Panel runat="server" ID="deleters"></asp:Panel>              
+                    <asp:Panel runat="server" ID="deletersPanel"></asp:Panel>              
                     <asp:Panel runat="server" CssClass="EP-systemMessage" ID="deleteResultsPanel" Visible="False">
 	                    <asp:Literal runat="server" Text="" ID="deleteResults" />
     	            </asp:Panel>
                 </div>
             </div>
-            <div class="epi-buttonContainer">
+            <div class="epi-buttonContainer epi-formArea">
+                <b style="color: red">
+                    <asp:CheckBox runat="server" ID="confirmUnderstand" Checked="False" Text="I do understand that this is irreversible" />
+                </b>
                 <EPiServerUI:ToolButton ID="deleteButton" Text="Delete"
                         ToolTip="Re-index selected sites" SkinID="Delete" OnClick="DeleteClick" OnClientClick="return confirm('Are you sure want to delete selected optimizations?')"
                         runat="server" CausesValidation="false" /> 
@@ -81,5 +92,19 @@
             </div>
         </asp:Panel>
     </asp:Panel>
-        
+    <script src="Scripts/AdminPlugin.js"></script>
+    <script>
+        $(function () {
+            window.epi.findExportImportPlugin.init({
+                exportSite: "<%=exportSite.ClientID%>",
+                exportLanguage: "<%=exportLanguage.ClientID%>",
+                deleteSite: "<%=deleteSite.ClientID%>",
+                deleteLanguage: "<%=deleteLanguage.ClientID%>",
+                confirmUnderstand: "<%=confirmUnderstand.ClientID%>",
+                exportResultPanel: "<%=exportResultPanel.ClientID%>",
+                exportButton: "<%=exportButton.ClientID%>",
+                deleteButton: "<%=deleteButton.ClientID%>"
+            });
+        });
+    </script>
 </asp:Content>

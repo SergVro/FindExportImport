@@ -85,13 +85,31 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::System.Web.UI.WebControls.DropDownList exportLanguage;
         
         /// <summary>
-        /// exporters control.
+        /// exportersPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel exporters;
+        protected global::System.Web.UI.WebControls.Panel exportersPanel;
+        
+        /// <summary>
+        /// exportResultPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel exportResultPanel;
+        
+        /// <summary>
+        /// exportResults control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal exportResults;
         
         /// <summary>
         /// exportButton control.
@@ -184,13 +202,13 @@ namespace Vro.FindExportImport.AdminPlugin {
         protected global::System.Web.UI.WebControls.DropDownList deleteLanguage;
         
         /// <summary>
-        /// deleters control.
+        /// deletersPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel deleters;
+        protected global::System.Web.UI.WebControls.Panel deletersPanel;
         
         /// <summary>
         /// deleteResultsPanel control.
@@ -209,6 +227,15 @@ namespace Vro.FindExportImport.AdminPlugin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal deleteResults;
+        
+        /// <summary>
+        /// confirmUnderstand control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox confirmUnderstand;
         
         /// <summary>
         /// deleteButton control.

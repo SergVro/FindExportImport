@@ -7,7 +7,7 @@ namespace Vro.FindExportImport.Export
     [ServiceConfiguration(typeof (IExporter))]
     public class SynonymExporter : ExporterBase<SynonymEntity>
     {
-        public SynonymExporter() : base(StoreFactory.GetStore<SynonymEntity>())
+        public SynonymExporter() : base(StoreFactory.GetStore<SynonymEntity>(), "#manage/optimization/synonyms")
         {
         }
     }

@@ -62,5 +62,11 @@ namespace Vro.FindExportImport
             languages.Insert(0, new TagSelectionModel { Id = Languages.AllLanguagesSuffix, Name="All languages"});
             return languages;
         }
+
+        public void Delete(List<string> entityKeys, string siteId, string language)
+        {
+            var importers = _exporters.Where(i => entityKeys.Contains(i.EntityKey)).ToList();
+            importers.ForEach(i => i.DeleteAll(siteId, language));
+        }
     }
 }

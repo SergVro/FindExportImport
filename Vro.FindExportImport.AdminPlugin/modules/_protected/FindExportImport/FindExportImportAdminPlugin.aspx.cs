@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Web.Services;
+using System.Web.UI;
 using System.Web.UI.WebControls;
+using EPiServer.Find.Helpers.Text;
 using EPiServer.Logging.Compatibility;
 using EPiServer.PlugIn;
 using EPiServer.Security;
+using EPiServer.Shell;
 using EPiServer.Shell.WebForms;
+using Newtonsoft.Json;
+using PlugInArea = EPiServer.PlugIn.PlugInArea;
 
 // ReSharper disable once CheckNamespace
 namespace Vro.FindExportImport.AdminPlugin
@@ -18,14 +26,23 @@ namespace Vro.FindExportImport.AdminPlugin
         private ExportManager _exportManager;
         private ImportManager _importManager;
         private ILog _log = LogManager.GetLogger(typeof (FindExportImportAdminPlugin));
+        private List<CheckboxId> _exportersCheckBoxes;
+        private List<CheckboxId> _deletersCheckBoxes;
 
         protected override void OnInit(EventArgs e)
         {
             _importManager = new ImportManager();
             _exportManager = new ExportManager();
 
-            CreateCheckBoxes(exporters, _exportManager.GetExporters().Select(exporter => exporter.EntityKey), true);
-            CreateCheckBoxes(deleters, _importManager.GetImporters().Select(importer => importer.EntityKey), false);
+            _exportersCheckBoxes = CreateCheckBoxes(exportersPanel, _exportManager.GetExporters().Select(exporter => new cbLinks
+            {
+                Id = exporter.EntityKey, Text = Helpers.GetEntityName(exporter.EntityKey), Link = exporter.UiUrl
+            }), true);
+
+            _deletersCheckBoxes = CreateCheckBoxes(deletersPanel, _exportManager.GetExporters().Select(exporter => new cbLinks
+            {
+                Id = exporter.EntityKey, Text = Helpers.GetEntityName(exporter.EntityKey), Link = exporter.UiUrl
+            }), false);
 
             _exportManager.GetSites().ForEach(s => exportSite.Items.Add(new ListItem(s.Name, s.Id)));
             _exportManager.GetSites().ForEach(s => importSite.Items.Add(new ListItem(s.Name, s.Id)));
@@ -40,6 +57,8 @@ namespace Vro.FindExportImport.AdminPlugin
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            exportResults.Text = "";
+            exportResultPanel.Visible = false;
 
             importResults.Text = "";
             importResultsPanel.Visible = false;
@@ -47,52 +66,63 @@ namespace Vro.FindExportImport.AdminPlugin
             deleteResults.Text = "";
             deleteResultsPanel.Visible = false;
 
-            SystemMessageContainer.Heading = "Find Export / Import";            
+            SystemMessageContainer.Heading = "Find Export / Import";
+            confirmUnderstand.Checked = false;
         }
 
-        private void CreateCheckBoxes(Panel container, IEnumerable<string> ids, bool defaultChecked)
+        private List<CheckboxId> CreateCheckBoxes(Panel container, IEnumerable<cbLinks> cbLinks, bool defaultChecked)
         {
-            var checkBoxes = ids
-                .Select(id => new CheckBox
+            var checkBoxList = new List<CheckboxId>();
+            cbLinks.ToList().ForEach(c =>
+            {
+                var checkBox = new CheckBox
                 {
-                    ID = container.ID + id,
-                    Text = Helpers.GetEntityName(id),
+                    ID = container.ID + c.Id,
+                    Text = c.Text,
                     Checked = defaultChecked
+                };
+
+                checkBoxList.Add(new CheckboxId
+                {
+                    CheckBox = checkBox,
+                    Id = c.Id
                 });
 
-            foreach (var checkBox in checkBoxes)
-            {
-                var wrapper = new Panel {CssClass = "epi-padding-small"};
-                wrapper.Controls.Add(checkBox);
-                container.Controls.Add(wrapper);
-            }
-        }
-
-        private List<string> GetCheckedIds(Panel container)
-        {
-            var exportersList = new List<string>();
-
-            foreach (Panel wrapper in container.Controls)
-            {
-                var checkBox = wrapper.Controls[0] as CheckBox;
-                if (checkBox != null && checkBox.Checked)
+                var wrapper = new Panel { CssClass = "epi-padding-small" };
+                var hyperLink = new HyperLink
                 {
-                    exportersList.Add(checkBox.ID.Substring(container.ID.Length));
-                }
-            }
-            return exportersList;
+                    Text = "(0)",
+                    ID = "link"+ container.ID + c.Id,
+                    Target = "_blank",
+                    NavigateUrl = Paths.ToResource("Find", c.Link)
+                };
+                wrapper.Controls.Add(checkBox);
+                wrapper.Controls.Add(hyperLink);
+                container.Controls.Add(wrapper);
+            });
+
+            return checkBoxList;
         }
 
         protected void ExportClick(object sender, EventArgs e)
         {
-            var exportersList = GetCheckedIds(exporters);
+            var exportersList = _exportersCheckBoxes.Where(c => c.CheckBox.Checked).Select(c => c.Id).ToList();
             _log.DebugFormat("Export EPiServer Find optimizations. User {0}. Optimizations: {1}, site: {2}, language: {3}", 
                 PrincipalInfo.Current.Name, string.Join(",", exportersList), exportSite.SelectedItem.Text, exportLanguage.SelectedItem.Text);
-            Response.Clear();
-            Response.ContentType = "applicaiton/json";
-            Response.AddHeader("content-disposition", "attachment; filename=FindOptimizations.json");
-            _exportManager.ExportToStream(exportersList, exportSite.SelectedValue, exportLanguage.SelectedValue, Response.OutputStream);
-            Response.End();
+            if (exportersList.Any())
+            {
+                Response.Clear();
+                Response.ContentType = "applicaiton/json";
+                Response.AddHeader("content-disposition", "attachment; filename=FindOptimizations.json");
+                _exportManager.ExportToStream(exportersList, exportSite.SelectedValue, exportLanguage.SelectedValue,
+                    Response.OutputStream);
+                Response.End();
+            }
+            else
+            {
+                exportResultPanel.Visible = true;
+                exportResults.Text = "No optimizations selected to export";
+            }
         }
 
         protected void ImportClick(object sender, EventArgs e)
@@ -112,13 +142,52 @@ namespace Vro.FindExportImport.AdminPlugin
 
         protected void DeleteClick(object sender, EventArgs e)
         {
-            var deletersList = GetCheckedIds(deleters);
+            var deletersList = _deletersCheckBoxes.Where(c => c.CheckBox.Checked).Select(c => c.Id).ToList();
             _log.WarnFormat("Deleting EPiServer Find optimizations. User: {0}. Optimizations: {1}, site: {2}, language: {3}", 
                 PrincipalInfo.Current.Name, string.Join(",", deletersList), deleteSite.SelectedItem.Text, deleteLanguage.SelectedItem.Text);
 
-            _importManager.Delete(deletersList, deleteSite.SelectedValue, deleteLanguage.SelectedValue);
+            _exportManager.Delete(deletersList, deleteSite.SelectedValue, deleteLanguage.SelectedValue);
             deleteResultsPanel.Visible = true;
             deleteResults.Text = "Deletion complete";
         }
+
+        public string GetAllIds()
+        {
+            var sb = new StringBuilder();
+            var stringWriter = new StringWriter(sb);
+            var ids = new Dictionary<string, string>();
+            AddControlsId(ids, Controls);
+            var serializer = new JsonSerializer();
+            serializer.Serialize(stringWriter, ids);
+            return stringWriter.ToString();
+        }
+
+        private void AddControlsId(Dictionary<string, string> idDictionary, ControlCollection controlCollection)
+        {
+            foreach (Control control in controlCollection)
+            {
+                if (!string.IsNullOrEmpty(control.ID) && !idDictionary.ContainsKey(control.ID))
+                {
+                    idDictionary.Add(control.ID, control.ClientID);
+                }
+                if (control.Controls.Count > 0)
+                {
+                    AddControlsId(idDictionary, control.Controls);
+                }
+            }
+        }
+    }
+
+    public class cbLinks
+    {
+        public string Id { get; set; }
+        public string Text { get; set; }
+        public string Link { get; set; }
+    }
+
+    public class CheckboxId
+    {
+        public CheckBox CheckBox { get; set; }
+        public string Id { get; set; }
     }
 }

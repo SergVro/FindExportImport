@@ -7,7 +7,7 @@ namespace Vro.FindExportImport.Export
     [ServiceConfiguration(typeof (IExporter))]
     public class RelatedQueryExporter : ExporterBase<RelatedQueryEntity>
     {
-        public RelatedQueryExporter() : base(StoreFactory.GetStore<RelatedQueryEntity>())
+        public RelatedQueryExporter() : base(StoreFactory.GetStore<RelatedQueryEntity>(), "#manage/optimization/relatedqueries")
         {
         }
     }
