@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Text;
+using EPiServer.Find;
 using EPiServer.Find.Connection;
 using Moq;
 using Vro.FindExportImport.Models;
@@ -10,7 +14,6 @@ namespace Vro.FindExportImport.Tests
 
     public class IndexStoreTests
     {
-        private readonly TestHelpers _testHelpers = new TestHelpers();
 
         [Fact]
         public void AutocompleteStoreGetByIdTest()
@@ -18,7 +21,8 @@ namespace Vro.FindExportImport.Tests
             // Arrange           
             string requestUrl = "";
             HttpVerbs? httpVerb = null;
-            var mockRequestFactory = _testHelpers.GetMockRequestFactory(
+            var context = new IndexStoreTestContext();
+            var mockRequestFactory = context.GetMockRequestFactory(
                 @"{ 
                     'id':'testId',
                     'query':'testQuery',
@@ -31,7 +35,7 @@ namespace Vro.FindExportImport.Tests
                     requestUrl = url;
                     httpVerb = verbs;
                 }));
-            var autocompleteStore = StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
+            var autocompleteStore = context.StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
             autocompleteStore.RequestFactory = mockRequestFactory.Object;
 
             // Act
@@ -53,7 +57,9 @@ namespace Vro.FindExportImport.Tests
             // Arrange           
             string requestUrl = "";
             HttpVerbs? httpVerb = null;
-            var mockRequestFactory = _testHelpers.GetMockRequestFactory(
+            var context = new IndexStoreTestContext();
+
+            var mockRequestFactory = context.GetMockRequestFactory(
                 @"{ 
                     'total':2,
                     'status': 'ok',
@@ -77,7 +83,7 @@ namespace Vro.FindExportImport.Tests
                     requestUrl = url;
                     httpVerb = verbs;
                 }));
-            var autocompleteStore = StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
+            var autocompleteStore = context.StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
             autocompleteStore.RequestFactory = mockRequestFactory.Object;
 
             // Act
@@ -100,14 +106,15 @@ namespace Vro.FindExportImport.Tests
             // Arrange           
             string requestUrl = "";
             HttpVerbs? httpVerb = null;
+            var context = new IndexStoreTestContext();
 
-            var mockRequestFactory = _testHelpers.GetMockRequestFactory(
+            var mockRequestFactory = context.GetMockRequestFactory(
                 @"{'status':'ok','id':'testId'}",
                 ((url, verbs, timeout) => {
                     requestUrl = url;
                     httpVerb = verbs;
                 }));
-            var autocompleteStore = StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
+            var autocompleteStore = context.StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
             autocompleteStore.RequestFactory = mockRequestFactory.Object;
 
             // Act
@@ -116,6 +123,35 @@ namespace Vro.FindExportImport.Tests
             // Assert
             Assert.Equal("http://myfindurl/myindex/_autocomplete/testId", requestUrl);
             Assert.Equal(HttpVerbs.Delete, httpVerb.Value);
+        }
+
+        [Fact]
+        public void AutocompleteStoreExceptionHandlingTest()
+        {
+            // Arrange
+            var context = new IndexStoreTestContext();
+            var response = new Mock<HttpWebResponse>();
+
+            var expected = "{'error':'TestErrorResponse', 'status':'error'}";
+            var expectedBytes = Encoding.UTF8.GetBytes(expected);
+            var responseStream = new MemoryStream();
+            responseStream.Write(expectedBytes, 0, expectedBytes.Length);
+            responseStream.Seek(0, SeekOrigin.Begin);
+
+            response.Setup(r => r.GetResponseStream()).Returns(responseStream);
+            var webException = new WebException("Test Error", null, WebExceptionStatus.UnknownError, response.Object);
+
+            var mockRequestFactory = context.GetErrorRequestFactory(webException);
+            var autocompleteStore = context.StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
+            autocompleteStore.RequestFactory = mockRequestFactory.Object;
+
+            // Act
+            var exception = Assert.Throws<ServiceException>(() => autocompleteStore.Delete("testId"));
+
+            // Assert
+            Assert.Equal("Test Error"+Environment.NewLine+"TestErrorResponse", exception.Message);
+
+            
         }
     }
 }

@@ -34,12 +34,12 @@ namespace Vro.FindExportImport.AdminPlugin
             _importManager = new ImportManager();
             _exportManager = new ExportManager();
 
-            _exportersCheckBoxes = CreateCheckBoxes(exportersPanel, _exportManager.GetExporters().Select(exporter => new cbLinks
+            _exportersCheckBoxes = CreateCheckBoxes(exportersPanel, _exportManager.Exporters.Select(exporter => new cbLinks
             {
                 Id = exporter.EntityKey, Text = Helpers.GetEntityName(exporter.EntityKey), Link = exporter.UiUrl
             }), true);
 
-            _deletersCheckBoxes = CreateCheckBoxes(deletersPanel, _exportManager.GetExporters().Select(exporter => new cbLinks
+            _deletersCheckBoxes = CreateCheckBoxes(deletersPanel, _exportManager.Exporters.Select(exporter => new cbLinks
             {
                 Id = exporter.EntityKey, Text = Helpers.GetEntityName(exporter.EntityKey), Link = exporter.UiUrl
             }), false);
@@ -70,10 +70,10 @@ namespace Vro.FindExportImport.AdminPlugin
             confirmUnderstand.Checked = false;
         }
 
-        private List<CheckboxId> CreateCheckBoxes(Panel container, IEnumerable<cbLinks> cbLinks, bool defaultChecked)
+        private List<CheckboxId> CreateCheckBoxes(Panel container, IEnumerable<cbLinks> checkBoxLinks, bool defaultChecked)
         {
             var checkBoxList = new List<CheckboxId>();
-            cbLinks.ToList().ForEach(c =>
+            checkBoxLinks.ToList().ForEach(c =>
             {
                 var checkBox = new CheckBox
                 {

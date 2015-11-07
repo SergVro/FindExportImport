@@ -7,7 +7,7 @@ namespace Vro.FindExportImport.Import
     [ServiceConfiguration(typeof (IImporter))]
     public class BestBetImporter : ImporterBase<BestBetEntity>
     {
-        public BestBetImporter() : base(StoreFactory.GetStore<BestBetEntity>())
+        public BestBetImporter(IStoreFactory storeFactory) : base(storeFactory.GetStore<BestBetEntity>())
         {
         }
     }

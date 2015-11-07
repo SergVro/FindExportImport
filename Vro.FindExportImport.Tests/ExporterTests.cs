@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EPiServer.Find.Connection;
+using Moq;
 using Newtonsoft.Json;
 using Vro.FindExportImport.Export;
 using Vro.FindExportImport.Models;
@@ -17,7 +18,6 @@ namespace Vro.FindExportImport.Tests
     {
         public const string AllSitesId = "84bfaf5c52a349a0bc61a9ffb6983a66";
         public const string AllLanguages = "7d2da0a9fc754533b091fa6886a51c0d";
-        private readonly TestHelpers _testHelpers = new TestHelpers();
 
         [Fact]
         public void AutocompleteExporterWriteToStream()
@@ -25,11 +25,11 @@ namespace Vro.FindExportImport.Tests
             // Arrange
             string requestUrl = "";
             HttpVerbs? httpVerb = null;
-
+            var context = new IndexStoreTestContext();
             var textWriter = new StringWriter();
             var writer = new JsonTextWriter(textWriter);
-            var exporter = new AutocompleteExporter();
-            ((IndexStore<AutocompleteEntity>) exporter.Store).RequestFactory = _testHelpers.GetMockRequestFactory(
+            var exporter = new AutocompleteExporter(context.StoreFactory);
+            ((IndexStore<AutocompleteEntity>) exporter.Store).RequestFactory = context.GetMockRequestFactory(
                 @"{ 
                     'total':2,
                     'status': 'ok',
@@ -49,10 +49,10 @@ namespace Vro.FindExportImport.Tests
                         'timestamp':'2015 - 10 - 30T17: 20:02Z'
                         }]
                 }",
-                ((url, verbs, timeout) => {
-                    requestUrl = url;
-                    httpVerb = verbs;
-                })).Object;
+                (url, verbs, timeout) => {
+                                             requestUrl = url;
+                                             httpVerb = verbs;
+                }).Object;
             
             // Act
             exporter.WriteToStream(AllSitesId, AllLanguages, writer);
@@ -73,5 +73,61 @@ namespace Vro.FindExportImport.Tests
             Assert.Equal("testQuery", exportedEntity1.Query);
             Assert.Equal(536870912, exportedEntity1.Priority);
         }
+
+        [Fact]
+        public void AutocompleteExporterDeleteAll()
+        {
+            // Arrange
+            var storeMock = new Mock<IStore<AutocompleteEntity>>();
+            
+            var listResult = new ListResult<AutocompleteEntity>();
+            listResult.Status = "ok";
+            listResult.Total = 2;
+            listResult.Hits = new List<AutocompleteEntity>
+            {
+                new AutocompleteEntity {Id = "testId1"},
+                new AutocompleteEntity {Id = "testId2"}
+            };
+
+            storeMock.Setup(s => s.List(AllSitesId, AllLanguages, 0, It.IsAny<int>())).Returns(listResult);
+            var storeFactoryMock = new Mock<IStoreFactory>();
+            storeFactoryMock.Setup(f => f.GetStore<AutocompleteEntity>()).Returns(storeMock.Object);
+            var exporter = new AutocompleteExporter(storeFactoryMock.Object);
+
+            // Act
+            exporter.DeleteAll(AllSitesId, AllLanguages);
+            
+            // Assert
+            storeMock.Verify(s => s.Delete(It.IsAny<string>()), Times.Exactly(2));
+        }
+
+        [Fact]
+        public void AutocompleteExporterGetTotal()
+        {
+            // Arrange
+            var storeMock = new Mock<IStore<AutocompleteEntity>>();
+
+            var listResult = new ListResult<AutocompleteEntity>();
+            listResult.Status = "ok";
+            listResult.Total = 2;
+            listResult.Hits = new List<AutocompleteEntity>
+            {
+                new AutocompleteEntity {Id = "testId1"},
+                new AutocompleteEntity {Id = "testId2"}
+            };
+
+            storeMock.Setup(s => s.List(AllSitesId, AllLanguages, 0, It.IsAny<int>())).Returns(listResult);
+            var storeFactoryMock = new Mock<IStoreFactory>();
+            storeFactoryMock.Setup(f => f.GetStore<AutocompleteEntity>()).Returns(storeMock.Object);
+            var exporter = new AutocompleteExporter(storeFactoryMock.Object);
+
+            // Act
+            var count = exporter.GetTotalCount(AllSitesId, AllLanguages);
+
+            // Assert
+            Assert.Equal(2, count);
+        }
+
+
     }
 }

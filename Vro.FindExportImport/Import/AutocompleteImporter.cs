@@ -7,7 +7,7 @@ namespace Vro.FindExportImport.Import
     [ServiceConfiguration(typeof (IImporter))]
     public class AutocompleteImporter : ImporterBase<AutocompleteEntity>
     {
-        public AutocompleteImporter() : base(StoreFactory.GetStore<AutocompleteEntity>())
+        public AutocompleteImporter(IStoreFactory storeFactory) : base(storeFactory.GetStore<AutocompleteEntity>())
         {
         }
     }

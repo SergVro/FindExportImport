@@ -5,35 +5,40 @@ using Vro.FindExportImport.Models;
 
 namespace Vro.FindExportImport.Stores
 {
-    public class StoreFactory
+    public interface IStoreFactory
     {
-        private static FindConfiguration _configuration;
+        IStore<T> GetStore<T>() where T : IOptimizationEntity;
+    }
 
-        public static FindConfiguration Config
+    [ServiceConfiguration(typeof(IStoreFactory))]
+    public class StoreFactory : IStoreFactory
+    {
+        private readonly FindConfiguration _configuration;
+
+        public StoreFactory(FindConfiguration configuration)
         {
-            get { return _configuration ?? (_configuration = new FindConfiguration(Configuration.GetConfiguration())); }
-            set { _configuration = value; }
+            _configuration = configuration;
         }
 
-        public static IStore<T> GetStore<T>() where T: IOptimizationEntity
+        IStore<T> IStoreFactory.GetStore<T>()
         {
             if (typeof(AutocompleteEntity) == typeof(T))
             {
-                return new IndexStore<T>("_autocomplete", Config);
+                return new IndexStore<T>("_autocomplete", _configuration);
             }
-            if (typeof (RelatedQueryEntity) == typeof(T))
+            if (typeof(RelatedQueryEntity) == typeof(T))
             {
-                return new IndexStore<T>("_didyoumean", Config);
+                return new IndexStore<T>("_didyoumean", _configuration);
             }
-            if (typeof (SynonymEntity) == typeof(T))
+            if (typeof(SynonymEntity) == typeof(T))
             {
-                var store = new IndexStore<T>("_admin/synonym", Config);
+                var store = new IndexStore<T>("_admin/synonym", _configuration);
                 store.ListUrlTemplate = store.BaseUrl + "?from={0}&size={1}&tags=language:{3}";
                 return store;
             }
             if (typeof(BestBetEntity) == typeof(T))
             {
-                return (IStore<T>) new BestBetStore(new BestBetControllerDefaultFactory(), ServiceLocator.Current.GetInstance<IContentRepository>());
+                return (IStore<T>)new BestBetStore(new BestBetControllerDefaultFactory(), ServiceLocator.Current.GetInstance<IContentRepository>());
             }
             return null;
         }

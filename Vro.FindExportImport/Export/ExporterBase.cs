@@ -69,7 +69,7 @@ namespace Vro.FindExportImport.Export
                     Store.Delete(hit.Id);
                 }
                 total = listToDelete.Total;
-            } while (total > 0);
+            } while (total > PageSize);
         }
     }
 }

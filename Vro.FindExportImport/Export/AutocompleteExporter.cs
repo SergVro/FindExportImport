@@ -7,7 +7,7 @@ namespace Vro.FindExportImport.Export
     [ServiceConfiguration(typeof(IExporter))]
     public class AutocompleteExporter : ExporterBase<AutocompleteEntity>
     {
-        public AutocompleteExporter() : base(StoreFactory.GetStore<AutocompleteEntity>(), "#manage/optimization/autocomplete")
+        public AutocompleteExporter(IStoreFactory storeFactory) : base(storeFactory.GetStore<AutocompleteEntity>(), "#manage/optimization/autocomplete")
         {
         }
     }

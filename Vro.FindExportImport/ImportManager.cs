@@ -42,11 +42,6 @@ namespace Vro.FindExportImport
             return result;
         }
 
-        public List<IImporter> GetImporters()
-        {
-            return _importers;
-        }
-
-      
+        public List<IImporter> Importers => _importers;
     }
 }
