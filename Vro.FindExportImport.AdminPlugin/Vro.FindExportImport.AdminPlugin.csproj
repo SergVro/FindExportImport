@@ -294,9 +294,18 @@
     <!-- Copy project output to the site modulesbin folder -->
     <ItemGroup>
       <BinFilesToCopy Include="$(OutputPath)Vro*.*" />
-      <ModuleFilesToCopy Include="$(MSBuildProjectDirectory)\modules\_protected\FindExportImport\**\*.*" />
+      <ModuleFilesToCopy 
+		Include="$(MSBuildProjectDirectory)\modules\_protected\FindExportImport\**\*.*" 
+		Exclude="$(MSBuildProjectDirectory)\modules\_protected\FindExportImport\**\*.cs" />
     </ItemGroup>
-    <Copy SourceFiles="@(BinFilesToCopy)" DestinationFolder="$(MSBuildProjectDirectory)\..\TestSite\bin\" />
-    <Copy SourceFiles="@(ModuleFilesToCopy)" DestinationFolder="$(MSBuildProjectDirectory)\..\TestSite\modules\_protected\FindExportImport\" />
+	<PropertyGroup>
+		<ModuleFilesTargetFolder>$(MSBuildProjectDirectory)\..\TestSite\modules\_protected\FindExportImport\</ModuleFilesTargetFolder>
+	</PropertyGroup>
+	<Message Text="@(ModuleFilesToCopy)" />
+    <Copy SourceFiles="@(BinFilesToCopy)" 
+		DestinationFolder="$(MSBuildProjectDirectory)\..\TestSite\bin\" />
+    <Copy SourceFiles="@(ModuleFilesToCopy)" 
+		DestinationFiles="@(ModuleFilesToCopy->'$(ModuleFilesTargetFolder)\%(RecursiveDir)%(Filename)%(Extension)')"
+	/>
   </Target>
 </Project>
