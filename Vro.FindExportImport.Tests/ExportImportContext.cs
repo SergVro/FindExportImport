@@ -30,6 +30,7 @@ namespace Vro.FindExportImport.Tests
         public ExportImportContext()
         {
             SiteIdentityLoaderMock = new Mock<ISiteIdentityLoader>();
+            SiteIdentityLoaderMock.SetupGet(l => l.AllSitesId).Returns(Helpers.AllSitesId);
             Settings = new Settings();
 
             AutocompleteStoreMock = new Mock<IStore<AutocompleteEntity>>();

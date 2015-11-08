@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -123,6 +124,40 @@ namespace Vro.FindExportImport.Tests
             // Assert
             Assert.Equal("http://myfindurl/myindex/_autocomplete/testId", requestUrl);
             Assert.Equal(HttpVerbs.Delete, httpVerb.Value);
+        }
+
+        [Fact]
+        public void AutocompleteStoreCreateTest()
+        {
+            // Arrange           
+            string requestUrl = "";
+            HttpVerbs? httpVerb = null;
+            var context = new IndexStoreTestContext();
+
+            var mockRequestFactory = context.GetMockRequestFactory(
+                @"{'status':'ok','id':'testAId'}",
+                ((url, verbs, timeout) => {
+                    requestUrl = url;
+                    httpVerb = verbs;
+                }));
+            var autocompleteStore = context.StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
+            autocompleteStore.RequestFactory = mockRequestFactory.Object;
+
+            var entity = new AutocompleteEntity
+            {
+                Id = "testAId",
+                Priority = 223,
+                Query = "testAQuery",
+                Tags = new List<string>()
+            };
+
+            // Act
+            var result = autocompleteStore.Create(entity);
+
+            // Assert
+            Assert.Equal("http://myfindurl/myindex/_autocomplete", requestUrl);
+            Assert.Equal(HttpVerbs.Put, httpVerb.Value);
+            Assert.Equal("testAId", result);
         }
 
         [Fact]

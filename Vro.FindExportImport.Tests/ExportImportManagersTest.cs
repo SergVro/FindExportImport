@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EPiServer.Find;
+using EPiServer.Find.Framework.Statistics;
 using Vro.FindExportImport.Export;
 using Vro.FindExportImport.Import;
 using Vro.FindExportImport.Models;
@@ -73,6 +75,67 @@ namespace Vro.FindExportImport.Tests
                          "{\"$type\":\"Vro.FindExportImport.Models.RelatedQueryEntity, Vro.FindExportImport\",\"priority\":1,\"query\":\"testRQQuery1\",\"suggestion\":\"testRQSuggestion1\",\"id\":\"testRQId1\",\"tags\":[\"siteid:84bfaf5c52a349a0bc61a9ffb6983a66\",\"language:7d2da0a9fc754533b091fa6886a51c0d\"]}" +
                          "]}]", exportedData);
 
+        }
+
+        [Fact]
+        public void ExportManagerSitesTest()
+        {
+            // Arrange
+            var context = new ExportImportContext();
+            var testSiteIdentity = new SiteIdentity
+            {
+                Id = Guid.NewGuid(),
+                Name = "TestSite",
+                RootPage = "123",
+                StartPage = "456"
+            };
+            context.SiteIdentityLoaderMock.SetupGet(l => l.SiteIdentites).Returns(new List<SiteIdentity> { testSiteIdentity});
+
+            var exportManager = new ExportManager(new List<IExporter>(), context.SiteIdentityLoaderMock.Object, context.Settings);
+            // Act
+            var sites = exportManager.GetSites();
+
+            // Assert
+            Assert.Equal(2, sites.Count);
+            Assert.Equal(Helpers.AllSitesId, sites[0].Id);
+            Assert.Equal(testSiteIdentity.Id.ToString(), sites[1].Id);
+        }
+
+        [Fact]
+        public void ExportManagerLanguagesTest()
+        {
+            // Arrange
+            var context = new ExportImportContext();
+            context.Settings.Languages = new Languages();
+            context.Settings.Languages.Add("sv");
+            var exportManager = new ExportManager(new List<IExporter>(), context.SiteIdentityLoaderMock.Object, context.Settings);
+            // Act
+            var languages = exportManager.GetLanguages();
+
+            // Assert
+            Assert.Equal(2, languages.Count);
+            Assert.Equal(new Guid(Helpers.AllLanguages), new Guid(languages[0].Id));
+            Assert.Equal("sv", languages[1].Id);
+        }
+
+        [Fact]
+        public void ExportManagerDeleteTest()
+        {
+            // Arrange
+            var context = new ExportImportContext();
+
+            context.SetupAutocompletes(23);
+            context.SetupRelatedQueries(12);
+
+            var exporters = new List<IExporter> { context.AutocompleteExporter, context.RelatedQueryExporter };
+            var exportManager = new ExportManager(exporters, context.SiteIdentityLoaderMock.Object, context.Settings);
+
+            // Act
+            exportManager.Delete(new List<string> { context.AutocompleteExporter.EntityKey }, Helpers.AllSitesId, Helpers.AllLanguages);
+
+            // Assert
+            Assert.Equal(0, context.Autocompletes.Count);
+            Assert.Equal(12, context.RelatedQueries.Count);
         }
 
         [Fact]

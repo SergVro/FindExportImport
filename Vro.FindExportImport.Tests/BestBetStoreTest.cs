@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EPiServer;
 using EPiServer.Core;
+using EPiServer.Find.UI.Models;
 using Moq;
 using Vro.FindExportImport.Models;
 using Vro.FindExportImport.Stores;
@@ -128,6 +129,35 @@ namespace Vro.FindExportImport.Tests
             var bestBetEntity1 = listResult.Hits.First();
             Assert.Equal("testId", bestBetEntity1.Id);
             Assert.Equal("planning", bestBetEntity1.Phrase);
+        }
+
+        [Fact]
+        public void Create()
+        {
+            // Arrange
+            var context = new BestBetStoreTestContext();
+            context.ResponseMessage.StatusCode = HttpStatusCode.OK;
+            context.ResponseMessage.Content = new StringContent("{'status':'ok', 'id':'testBId'}");
+            context.MockController.Setup(c => c.Post(It.IsAny<BestBetModel>())).Returns(context.ResponseMessage);
+            var bestBetStore = context.BestBetStore;
+
+            var testEntity = new BestBetEntity
+            {
+                Id = "testBId",
+                BestBetHasOwnStyle = true,
+                BestBetTargetDescription = "testDescription",
+                BestBetTargetTitle = "testTitle",
+                Phrase = "testPhrase",
+                Tags = new List<string>(),
+                TargetName = "testName",
+                TargetKey = "http://episerver.com",
+                TargetType = "ExternalUrl"
+            };
+            // Act
+            var result = bestBetStore.Create(testEntity);
+
+            // Assert
+            Assert.Equal("testBId", result);
         }
     }
 }
