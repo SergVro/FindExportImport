@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using EPiServer.Find.Connection;
@@ -51,6 +53,22 @@ namespace Vro.FindExportImport.Tests
             });
 
             return mockRequestFactory;
+        }
+
+        public WebException GetWebException(string errorMessage, string errorMessageInResponse, HttpStatusCode statusCode)
+        {
+            var response = new Mock<HttpWebResponse>();
+
+            var expected = "{'error':'"+errorMessageInResponse+"', 'status':'error'}";
+            var expectedBytes = Encoding.UTF8.GetBytes(expected);
+            var responseStream = new MemoryStream();
+            responseStream.Write(expectedBytes, 0, expectedBytes.Length);
+            responseStream.Seek(0, SeekOrigin.Begin);
+
+            response.Setup(r => r.GetResponseStream()).Returns(responseStream);
+            response.SetupGet(r => r.StatusCode).Returns(statusCode);
+            var webException = new WebException(errorMessage, null, WebExceptionStatus.UnknownError, response.Object);
+            return webException;
         }
     }
 }

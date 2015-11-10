@@ -5,7 +5,6 @@ using System.Net;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Find;
-using EPiServer.Find.Framework;
 using EPiServer.Find.Json;
 using EPiServer.Find.UI.Models;
 using Newtonsoft.Json;
@@ -15,16 +14,16 @@ namespace Vro.FindExportImport.Stores
 {
     public class BestBetStore : IStore<BestBetEntity>
     {
-        private const string PageBestBetSelector = "PageBestBetSelector";
-        private const string CommerceBestBetSelector = "CommerceBestBetSelector";
         private readonly IBestBetControllerFactory _bestBetControllerFactory;
         private readonly IContentRepository _contentRepository;
+        private readonly ISearchService _searchService;
 
-        public BestBetStore(IBestBetControllerFactory bestBetControllerFactory, IContentRepository contentRepository)
+        public BestBetStore(IBestBetControllerFactory bestBetControllerFactory, IContentRepository contentRepository, ISearchService searchService)
         {
             _bestBetControllerFactory = bestBetControllerFactory;
             DefaultSerializer = Serializer.CreateDefault();
             _contentRepository = contentRepository;
+            _searchService = searchService;
         }
 
         public JsonSerializer DefaultSerializer { get; set; }
@@ -135,32 +134,19 @@ namespace Vro.FindExportImport.Stores
 
         private static bool IsContentBestBet(BestBetEntity entity)
         {
-            return entity.TargetType == PageBestBetSelector || entity.TargetType == CommerceBestBetSelector;
+            return entity.TargetType == Helpers.PageBestBetSelector || entity.TargetType == Helpers.CommerceBestBetSelector;
         }
 
         protected virtual void ConvertTarget(BestBetEntity bestBetEntity, BestBetModel bestBetModel)
         {
-            var searchQuery = SearchClient.Instance
-                .Search<IContent>()
-                .Filter(x => x.Name.Match(bestBetEntity.TargetName));
-
-            if (bestBetEntity.TargetType.Equals(PageBestBetSelector))
-            {
-                searchQuery = searchQuery.Filter(x => !x.ContentLink.ProviderName.Exists());
-            }
-            else if (bestBetEntity.TargetType.Equals(CommerceBestBetSelector))
-            {
-                searchQuery = searchQuery.Filter(x => x.ContentLink.ProviderName.Match("CatalogContent"));
-            }
-
-            var searchResults = searchQuery.Select(c => c.ContentLink).Take(1).GetResult();
-            var contentReference = searchResults.Hits.FirstOrDefault()?.Document;
+            var contentReference = _searchService.FindMatchingContent(bestBetEntity);
             bestBetModel.TargetKey = contentReference?.ToString();
             if (bestBetModel.TargetKey == null)
             {
                 throw new ServiceException("Can't find Content with name: " + bestBetEntity.TargetName);
             }
         }
+
 
         protected string GetIdFromResponse(string responseBody)
         {

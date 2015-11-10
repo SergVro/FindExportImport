@@ -13,6 +13,7 @@ namespace Vro.FindExportImport.Tests
         public Mock<IBestBetControllerFactory> MockBestBetControllerFactory { get; }
         public Mock<IBestBetsController> MockController { get; }
         public Mock<IContentRepository> MockContentRepository { get; }
+        public Mock<ISearchService> MockSearchService { get; }
         public HttpResponseMessage ResponseMessage { get; }
 
         public BestBetStore BestBetStore { get; private set; }
@@ -24,8 +25,9 @@ namespace Vro.FindExportImport.Tests
             MockBestBetControllerFactory = new Mock<IBestBetControllerFactory>();
             MockBestBetControllerFactory.Setup(f => f.CreateController()).Returns(MockController.Object);
             MockContentRepository = new Mock<IContentRepository>();
+            MockSearchService = new Mock<ISearchService>();
             MockContent = new Mock<IContent>();
-            BestBetStore = new BestBetStore(MockBestBetControllerFactory.Object, MockContentRepository.Object);
+            BestBetStore = new BestBetStore(MockBestBetControllerFactory.Object, MockContentRepository.Object, MockSearchService.Object);
 
         }
     }

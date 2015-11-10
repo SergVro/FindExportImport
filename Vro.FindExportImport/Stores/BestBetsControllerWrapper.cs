@@ -2,6 +2,7 @@
 using System.Web.Http;
 using EPiServer.Find.UI.Controllers;
 using EPiServer.Find.UI.Models;
+using EPiServer.ServiceLocation;
 
 namespace Vro.FindExportImport.Stores
 {
@@ -18,6 +19,7 @@ namespace Vro.FindExportImport.Stores
         IBestBetsController CreateController();
     }
 
+    [ServiceConfiguration(typeof(IBestBetControllerFactory))]
     public class BestBetControllerDefaultFactory : IBestBetControllerFactory
     {
         public IBestBetsController CreateController()

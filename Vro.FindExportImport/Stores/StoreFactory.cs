@@ -38,7 +38,7 @@ namespace Vro.FindExportImport.Stores
             }
             if (typeof(BestBetEntity) == typeof(T))
             {
-                return (IStore<T>)new BestBetStore(new BestBetControllerDefaultFactory(), ServiceLocator.Current.GetInstance<IContentRepository>());
+                return (IStore<T>) ServiceLocator.Current.GetInstance<BestBetStore>();
             }
             return null;
         }

@@ -132,7 +132,7 @@ namespace Vro.FindExportImport.Tests
         }
 
         [Fact]
-        public void Create()
+        public void CreateExternal()
         {
             // Arrange
             var context = new BestBetStoreTestContext();
@@ -152,6 +152,37 @@ namespace Vro.FindExportImport.Tests
                 TargetName = "testName",
                 TargetKey = "http://episerver.com",
                 TargetType = "ExternalUrl"
+            };
+            // Act
+            var result = bestBetStore.Create(testEntity);
+
+            // Assert
+            Assert.Equal("testBId", result);
+        }
+
+        [Fact]
+        public void CreatePageSelector()
+        {
+            // Arrange
+            var context = new BestBetStoreTestContext();
+            context.ResponseMessage.StatusCode = HttpStatusCode.OK;
+            context.ResponseMessage.Content = new StringContent("{'status':'ok', 'id':'testBId'}");
+            context.MockController.Setup(c => c.Post(It.IsAny<BestBetModel>())).Returns(context.ResponseMessage);
+            context.MockSearchService.Setup(s => s.FindMatchingContent(It.IsAny<BestBetEntity>()))
+                .Returns(new ContentReference(5));
+            var bestBetStore = context.BestBetStore;
+
+            var testEntity = new BestBetEntity
+            {
+                Id = "testBId",
+                BestBetHasOwnStyle = true,
+                BestBetTargetDescription = "testDescription",
+                BestBetTargetTitle = "testTitle",
+                Phrase = "testPhrase",
+                Tags = new List<string>(),
+                TargetName = "testName",
+                TargetKey = "5",
+                TargetType = Helpers.PageBestBetSelector
             };
             // Act
             var result = bestBetStore.Create(testEntity);

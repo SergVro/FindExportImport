@@ -229,6 +229,7 @@
     <Compile Include="Models\SynonymEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stores\IndexStore.cs" />
+    <Compile Include="Stores\SearchService.cs" />
     <Compile Include="Stores\StoreFactory.cs" />
   </ItemGroup>
   <ItemGroup>

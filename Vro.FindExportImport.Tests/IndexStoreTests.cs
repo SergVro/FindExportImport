@@ -53,6 +53,24 @@ namespace Vro.FindExportImport.Tests
         }
 
         [Fact]
+        public void AutocompleteStoreGetByIdErrorTest()
+        {
+            // Arrange           
+            var context = new IndexStoreTestContext();
+            var webException = context.GetWebException("Test Error", "TestErrorResponse", HttpStatusCode.NotFound);
+
+            var mockRequestFactory = context.GetErrorRequestFactory(webException);
+            var autocompleteStore = context.StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
+            autocompleteStore.RequestFactory = mockRequestFactory.Object;
+
+            // Act
+            var result =  autocompleteStore.Get("testId");
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
         public void AutocompleteStoreListTest()
         {
             // Arrange           
@@ -161,20 +179,11 @@ namespace Vro.FindExportImport.Tests
         }
 
         [Fact]
-        public void AutocompleteStoreExceptionHandlingTest()
+        public void AutocompleteStoreDeleteErrorTest()
         {
             // Arrange
             var context = new IndexStoreTestContext();
-            var response = new Mock<HttpWebResponse>();
-
-            var expected = "{'error':'TestErrorResponse', 'status':'error'}";
-            var expectedBytes = Encoding.UTF8.GetBytes(expected);
-            var responseStream = new MemoryStream();
-            responseStream.Write(expectedBytes, 0, expectedBytes.Length);
-            responseStream.Seek(0, SeekOrigin.Begin);
-
-            response.Setup(r => r.GetResponseStream()).Returns(responseStream);
-            var webException = new WebException("Test Error", null, WebExceptionStatus.UnknownError, response.Object);
+            var webException = context.GetWebException("Test Error", "TestErrorResponse", HttpStatusCode.NotFound);
 
             var mockRequestFactory = context.GetErrorRequestFactory(webException);
             var autocompleteStore = context.StoreFactory.GetStore<AutocompleteEntity>() as IndexStore<AutocompleteEntity>;
