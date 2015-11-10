@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.Find;
 using EPiServer.Find.Framework;
@@ -23,11 +25,14 @@ namespace Vro.FindExportImport.Stores
 
             if (bestBetEntity.TargetType.Equals(Helpers.PageBestBetSelector))
             {
-                searchQuery = searchQuery.Filter(x => !x.ContentLink.ProviderName.Exists());
+                searchQuery = searchQuery.Filter(x => x.MatchTypeHierarchy(typeof(PageData)));
             }
             else if (bestBetEntity.TargetType.Equals(Helpers.CommerceBestBetSelector))
             {
-                searchQuery = searchQuery.Filter(x => x.ContentLink.ProviderName.Match("CatalogContent"));
+                // resolving type from string to avoid referencing Commerce assemblies
+                var commerceCatalogEntryType =
+                    Type.GetType("EPiServer.Commerce.Catalog.ContentTypes.EntryContentBase, EPiServer.Business.Commerce");
+                searchQuery = searchQuery.Filter(x => x.MatchTypeHierarchy(commerceCatalogEntryType));
             }
 
             var searchResults = searchQuery.Select(c => c.ContentLink).Take(1).GetResult();
