@@ -33,5 +33,8 @@ namespace Vro.FindExportImport
         public const string AllLanguages = "7d2da0a9fc754533b091fa6886a51c0d";
         public const string PageBestBetSelector = "PageBestBetSelector";
         public const string CommerceBestBetSelector = "CommerceBestBetSelector";
+
+        public static string SiteIdTag => EPiServer.Find.Framework.Statistics.SiteStatisticTag.TagName;
+        public static string LanguageTag => EPiServer.Find.Framework.Statistics.LanguageStatisticTag.TagName;
     }
 }

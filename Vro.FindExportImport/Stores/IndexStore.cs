@@ -33,7 +33,7 @@ namespace Vro.FindExportImport.Stores
             var index = config.DefaultIndex;
 
             BaseUrl = $"{serviceUrl}/{index}/{entityUrl}";
-            ListUrlTemplate = BaseUrl + "/list?from={0}&size={1}&tags=siteid:{2},language:{3}";
+            ListUrlTemplate = BaseUrl + "/list?from={0}&size={1}&tags=" + Helpers.SiteIdTag + "{2}," + Helpers.LanguageTag + "{3}";
             GetUrlTemplate = BaseUrl + "/{0}";
             DeleteUrlTemplate = BaseUrl + "/{0}";
             CreateUrlTemplate = BaseUrl;

@@ -3,6 +3,7 @@ using System.Linq;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Find;
+using EPiServer.Find.Cms;
 using EPiServer.Find.Framework;
 using EPiServer.ServiceLocation;
 using Vro.FindExportImport.Models;
@@ -19,9 +20,12 @@ namespace Vro.FindExportImport.Stores
     {
         public ContentReference FindMatchingContent(BestBetEntity bestBetEntity)
         {
+            var siteId = bestBetEntity.Tags.Find(s => s.StartsWith(Helpers.SiteIdTag))
+                .Substring(Helpers.SiteIdTag.Length);
             var searchQuery = SearchClient.Instance
                 .Search<IContent>()
-                .Filter(x => x.Name.Match(bestBetEntity.TargetName));
+                .Filter(x => x.Name.Match(bestBetEntity.TargetName))
+                .Filter(x => x.SiteId().Match(siteId));
 
             if (bestBetEntity.TargetType.Equals(Helpers.PageBestBetSelector))
             {

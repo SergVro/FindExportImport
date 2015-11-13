@@ -50,13 +50,13 @@ namespace Vro.FindExportImport.Import
         public void UpdateSiteId(string siteId, IOptimizationEntity entity)
         {
             var tags = entity.Tags;
-            var siteIdTag = tags.FirstOrDefault(t => t.StartsWith("siteid:"));
+            var siteIdTag = tags.FirstOrDefault(t => t.StartsWith(Helpers.SiteIdTag));
             if (siteIdTag == null)
             {
                 return;
             }
             var siteIdTagIndex = tags.IndexOf(siteIdTag);
-            var newSiteIdtag = "siteid:" + siteId;
+            var newSiteIdtag = Helpers.SiteIdTag + siteId;
             entity.Tags[siteIdTagIndex] = newSiteIdtag;
         }
     }

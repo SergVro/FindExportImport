@@ -56,7 +56,8 @@ namespace Vro.FindExportImport.Stores
         public ListResult<BestBetEntity> List(string siteId, string language, int from, int size)
         {
             var bestBetsController = _bestBetControllerFactory.CreateController();
-            var responseMessage = bestBetsController.GetList(from, size, $"siteid:{siteId},language:{language}");
+            var responseMessage = bestBetsController.GetList(from, size, 
+                $"{Helpers.SiteIdTag}{siteId},{Helpers.LanguageTag}{language}");
             var responseContentAsync = responseMessage.Content.ReadAsStringAsync();
             var response = responseContentAsync.Result;
             var listResult = new ListResult<BestBetEntity> {Hits = new List<BestBetEntity>()};
