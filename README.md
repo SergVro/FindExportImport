@@ -3,6 +3,7 @@
 
 This is EPiServer CMS Admin mode plugin for EPiServer Find optimizations export / import.
 The plugin allows to export and import synonyms, related queries, autocompletes and best bets.
+More information is available in [this blog post](http://world.episerver.com/blogs/Sergey-Vorushilo/Dates/2015/11/find-optimizations-export--import/).
 
 ## Setup
 The solution contains three projects:
