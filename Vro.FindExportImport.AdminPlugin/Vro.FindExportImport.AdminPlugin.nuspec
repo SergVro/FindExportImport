@@ -3,7 +3,7 @@
   <metadata>
     <id>Vro.FindExportImport</id>
     <version>$version$</version>
-    <title>$title$</title>
+    <title>EPiServer Find optimizations export/import plugin</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
     <licenseUrl>https://github.com/SergVro/FindExportImport/blob/master/LICENSE</licenseUrl>
