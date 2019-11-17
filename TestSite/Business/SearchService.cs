@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Web;
 using EPiServer.Core;
 using EPiServer.Search;
+using EPiServer.Search.IndexingService;
 using EPiServer.Search.Queries;
 using EPiServer.Search.Queries.Lucene;
 using EPiServer.Security;
@@ -22,7 +23,7 @@ namespace TestSite.Business
 
         public virtual bool IsActive
         {
-            get { return SearchSettings.Config.Active; }
+            get { return SearchSettings.Options.Active; }
         }
 
         public virtual SearchResults Search(string searchText, IEnumerable<ContentReference> searchRoots, HttpContextBase context, string languageBranch, int maxResults)
