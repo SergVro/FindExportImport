@@ -12,9 +12,11 @@ namespace TestSite.Models.Blocks
     public class ButtonBlock : SiteBlockData
     {
         [Display(Order = 1, GroupName = SystemTabNames.Content)]
+        [Required]
         public virtual string ButtonText { get; set; }
 
         [Display(Order = 2, GroupName = SystemTabNames.Content)]
+        [Required]
         public virtual Url ButtonLink { get; set; }
     }
 }

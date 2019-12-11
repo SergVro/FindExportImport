@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TestSite.Models.Blocks;
 using EPiServer.Core;
@@ -14,17 +15,16 @@ namespace TestSite.Models.Pages
         GUID = "17583DCD-3C11-49DD-A66D-0DEF0DD601FC",
         GroupName = Global.GroupNames.Products)]
     [SiteImageUrl(Global.StaticGraphicsFolderPath + "page-type-thumbnail-product.png")]
-    [AvailableContentTypes( 
+    [AvailableContentTypes(
         Availability = Availability.Specific,
         IncludeOn = new[] { typeof(StartPage) })]
     public class ProductPage : StandardPage, IHasRelatedContent
     {
         [Required]
-        [BackingType(typeof(PropertyStringList))]
         [Display(Order = 305)]
-        [UIHint(Global.SiteUIHints.Strings)]
+        [UIHint(Global.SiteUIHints.StringsCollection)]
         [CultureSpecific]
-        public virtual string[] UniqueSellingPoints { get; set; }
+        public virtual IList<string> UniqueSellingPoints { get; set; }
 
         [Display(
             GroupName = SystemTabNames.Content,

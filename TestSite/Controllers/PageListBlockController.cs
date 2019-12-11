@@ -26,7 +26,7 @@ namespace TestSite.Controllers
             var pages = FindPages(currentBlock);
 
             pages = Sort(pages, currentBlock.SortOrder);
-            
+
             if(currentBlock.Count > 0)
             {
                 pages = pages.Take(currentBlock.Count);
@@ -63,7 +63,7 @@ namespace TestSite.Controllers
                 if (currentBlock.PageTypeFilter != null)
                 {
                     pages = contentLoader.GetChildren<PageData>(listRoot)
-                        .Where(p => p.PageTypeID == currentBlock.PageTypeFilter.ID);
+                        .Where(p => p.ContentTypeID == currentBlock.PageTypeFilter.ID);
                 }
                 else
                 {

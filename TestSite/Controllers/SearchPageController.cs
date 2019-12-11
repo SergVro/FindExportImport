@@ -24,8 +24,8 @@ namespace TestSite.Controllers
         private readonly TemplateResolver _templateResolver;
 
         public SearchPageController(
-            SearchService searchService, 
-            ContentSearchHandler contentSearchHandler, 
+            SearchService searchService,
+            ContentSearchHandler contentSearchHandler,
             TemplateResolver templateResolver,
             UrlResolver urlResolver)
         {
@@ -47,9 +47,9 @@ namespace TestSite.Controllers
             if(!string.IsNullOrWhiteSpace(q) && _searchService.IsActive)
             {
                 var hits = Search(q.Trim(),
-                    new[] { SiteDefinition.Current.StartPage, SiteDefinition.Current.GlobalAssetsRoot, SiteDefinition.Current.SiteAssetsRoot }, 
-                    ControllerContext.HttpContext, 
-                    currentPage.LanguageID).ToList();
+                    new[] { SiteDefinition.Current.StartPage, SiteDefinition.Current.GlobalAssetsRoot, SiteDefinition.Current.SiteAssetsRoot },
+                    ControllerContext.HttpContext,
+                    currentPage.Language?.Name).ToList();
                 model.Hits = hits;
                 model.NumberOfHits = hits.Count();
             }

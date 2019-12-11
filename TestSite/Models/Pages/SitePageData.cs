@@ -25,8 +25,8 @@ namespace TestSite.Models.Pages
 
                 // Use explicitly set meta title, otherwise fall back to page name
                 return !string.IsNullOrWhiteSpace(metaTitle)
-                       ? metaTitle
-                       : PageName;
+                        ? metaTitle
+                        : PageName;
             }
             set { this.SetPropertyValue(p => p.MetaTitle, value); }
         }
@@ -42,7 +42,7 @@ namespace TestSite.Models.Pages
             GroupName = Global.GroupNames.MetaData,
             Order = 300)]
         [CultureSpecific]
-        [UIHint(UIHint.LongString)]
+        [UIHint(UIHint.Textarea)]
         public virtual string MetaDescription { get; set; }
 
         [Display(
@@ -70,8 +70,8 @@ namespace TestSite.Models.Pages
 
                 // Use explicitly set teaser text, otherwise fall back to description
                 return !string.IsNullOrWhiteSpace(teaserText)
-                       ? teaserText
-                       : MetaDescription;
+                        ? teaserText
+                        : MetaDescription;
             }
             set { this.SetPropertyValue(p => p.TeaserText, value); }
         }

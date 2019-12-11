@@ -7,6 +7,9 @@ namespace TestSite
 
     public class Global
     {
+        public static readonly string LoginPath = "/util/login.aspx";
+        public static readonly string AppRelativeLoginPath = string.Format("~{0}", LoginPath);
+
         /// <summary>
         /// Group names for content types and properties
         /// </summary>
@@ -73,6 +76,7 @@ namespace TestSite
         {
             public const string Contact = "contact";
             public const string Strings = "StringList";
+            public const string StringsCollection = "StringsCollection";
         }
 
         /// <summary>
@@ -81,4 +85,3 @@ namespace TestSite
         public const string StaticGraphicsFolderPath = "~/Static/gfx/";
     }
 }
-

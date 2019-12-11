@@ -1,29 +1,29 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using EPiServer.Core;
 using EPiServer.Framework.DataAnnotations;
 using EPiServer.Framework.Web;
 using TestSite.Business;
-using TestSite.Business.Rendering;
 using TestSite.Models.Pages;
 using TestSite.Models.ViewModels;
 using EPiServer.Web;
 using EPiServer.Web.Mvc;
 using EPiServer;
+using EPiServer.Framework.Web.Mvc;
 
 namespace TestSite.Controllers
 {
-    /* Note: as the content area rendering on Alloy is customized we create ContentArea instances 
-     * which we render in the preview view in order to provide editors with a preview which is as 
-     * realistic as possible. In other contexts we could simply have passed the block to the 
-     * view and rendered it using Html.RenderContentData */
+    /* Note: as the content area rendering on Alloy is customized we create ContentArea instances
+    * which we render in the preview view in order to provide editors with a preview which is as
+    * realistic as possible. In other contexts we could simply have passed the block to the
+    * view and rendered it using Html.RenderContentData */
     [TemplateDescriptor(
         Inherited = true,
         TemplateTypeCategory = TemplateTypeCategories.MvcController, //Required as controllers for blocks are registered as MvcPartialController by default
         Tags = new[] { RenderingTags.Preview, RenderingTags.Edit },
         AvailableWithoutTag = false)]
     [VisitorGroupImpersonation]
+    [RequireClientResources]
     public class PreviewController : ActionControllerBase, IRenderTemplate<BlockData>, IModifyLayout
     {
         private readonly IContentLoader _contentLoader;
@@ -53,8 +53,8 @@ namespace TestSite.Controllers
                 foreach (var displayOption in supportedDisplayOptions)
                 {
                     var contentArea = new ContentArea();
-                    contentArea.Items.Add(new ContentAreaItem 
-                    { 
+                    contentArea.Items.Add(new ContentAreaItem
+                    {
                         ContentLink = currentContent.ContentLink
                     });
                     var areaModel = new PreviewModel.PreviewArea
@@ -74,10 +74,10 @@ namespace TestSite.Controllers
         private bool SupportsTag(IContent content, string tag)
         {
             var templateModel = _templateResolver.Resolve(HttpContext,
-                                      content.GetOriginalType(),
-                                      content,
-                                      TemplateTypeCategories.MvcPartial,
-                                      tag);
+                                    content.GetOriginalType(),
+                                    content,
+                                    TemplateTypeCategories.MvcPartial,
+                                    tag);
 
             return templateModel != null;
         }

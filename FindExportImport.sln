@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSite", "TestSite\TestSite.csproj", "{7A5CF91B-8600-447D-BCD5-146860A987FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSite", "TestSite\TestSite.csproj", "{EFADE87C-C296-4BC5-BB7F-EAC17DCA4332}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vro.FindExportImport", "Vro.FindExportImport\Vro.FindExportImport.csproj", "{94148012-2F16-46A1-BC89-97F309958789}"
 EndProject
@@ -23,10 +23,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7A5CF91B-8600-447D-BCD5-146860A987FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A5CF91B-8600-447D-BCD5-146860A987FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A5CF91B-8600-447D-BCD5-146860A987FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A5CF91B-8600-447D-BCD5-146860A987FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFADE87C-C296-4BC5-BB7F-EAC17DCA4332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFADE87C-C296-4BC5-BB7F-EAC17DCA4332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFADE87C-C296-4BC5-BB7F-EAC17DCA4332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFADE87C-C296-4BC5-BB7F-EAC17DCA4332}.Release|Any CPU.Build.0 = Release|Any CPU
 		{94148012-2F16-46A1-BC89-97F309958789}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94148012-2F16-46A1-BC89-97F309958789}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94148012-2F16-46A1-BC89-97F309958789}.Release|Any CPU.ActiveCfg = Release|Any CPU
