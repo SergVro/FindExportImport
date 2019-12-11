@@ -1,12 +1,13 @@
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using TestSite.Helpers;
 using TestSite.Models.Pages;
 using TestSite.Models.ViewModels;
 using EPiServer;
 using EPiServer.Core;
+using EPiServer.Data;
 using EPiServer.Web;
 using EPiServer.Web.Routing;
 
@@ -16,20 +17,27 @@ namespace TestSite.Business
     {
         private readonly IContentLoader _contentLoader;
         private readonly UrlResolver _urlResolver;
-        public PageViewContextFactory(IContentLoader contentLoader, UrlResolver urlResolver)
+        private readonly IDatabaseMode _databaseMode;
+
+        public PageViewContextFactory(IContentLoader contentLoader, UrlResolver urlResolver, IDatabaseMode databaseMode)
         {
             _contentLoader = contentLoader;
             _urlResolver = urlResolver;
+            _databaseMode = databaseMode;
         }
 
         public virtual LayoutModel CreateLayoutModel(ContentReference currentContentLink, RequestContext requestContext)
         {
-            var startPage = _contentLoader.Get<StartPage>(SiteDefinition.Current.StartPage);
+            var startPageContentLink = SiteDefinition.Current.StartPage;
 
-            //var companyPages = _contentLoader.GetChildren<PageData>(startPage.CompanyInformationPageLink)
-            //    .FilterForDisplay(requirePageTemplate: true)
-            //    .ToList();
-            //companyPages.Insert(0, _contentLoader.Get<PageData>(startPage.CompanyInformationPageLink));
+            // Use the content link with version information when editing the startpage,
+            // otherwise the published version will be used when rendering the props below.
+            if (currentContentLink.CompareToIgnoreWorkID(startPageContentLink))
+            {
+                startPageContentLink = currentContentLink;
+            }
+
+            var startPage = _contentLoader.Get<StartPage>(startPageContentLink);
 
             return new LayoutModel
                 {
@@ -41,15 +49,16 @@ namespace TestSite.Business
                     CustomerZonePages = startPage.CustomerZonePageLinks,
                     LoggedIn = requestContext.HttpContext.User.Identity.IsAuthenticated,
                     LoginUrl = new MvcHtmlString(GetLoginUrl(currentContentLink)),
-                    SearchPageRouteValues = requestContext.GetPageRoute(startPage.SearchPageLink)
+                    SearchActionUrl = new MvcHtmlString(EPiServer.Web.Routing.UrlResolver.Current.GetUrl(startPage.SearchPageLink)),
+                    IsInReadonlyMode = _databaseMode.DatabaseMode == DatabaseMode.ReadOnly
                 };
         }
 
         private string GetLoginUrl(ContentReference returnToContentLink)
         {
             return string.Format(
-                "{0}?ReturnUrl={1}", 
-                FormsAuthentication.LoginUrl,
+                "{0}?ReturnUrl={1}",
+                (FormsAuthentication.IsEnabled ? FormsAuthentication.LoginUrl : VirtualPathUtility.ToAbsolute(Global.AppRelativeLoginPath)),
                 _urlResolver.GetUrl(returnToContentLink));
         }
 

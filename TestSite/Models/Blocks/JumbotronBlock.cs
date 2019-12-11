@@ -23,7 +23,7 @@ namespace TestSite.Models.Blocks
         [CultureSpecific]
         [UIHint(UIHint.Image)]
         public virtual ContentReference Image { get; set; }
-        
+
         /// <summary>
         /// Gets or sets a description for the image, for example used as the alt text for the image when rendered
         /// </summary>
@@ -32,7 +32,7 @@ namespace TestSite.Models.Blocks
             Order = 1
             )]
         [CultureSpecific]
-        [UIHint(UIHint.LongString)]
+        [UIHint(UIHint.Textarea)]
         public virtual string ImageDescription
         {
             get

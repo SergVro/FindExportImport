@@ -1,10 +1,7 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using TestSite.Models.Blocks;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
-using EPiServer.Shell.ObjectEditing;
+using System.ComponentModel.DataAnnotations;
 
 namespace TestSite.Models.Pages
 {

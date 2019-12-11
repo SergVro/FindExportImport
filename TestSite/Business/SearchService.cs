@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Web;
 using EPiServer.Core;
 using EPiServer.Search;
-using EPiServer.Search.IndexingService;
 using EPiServer.Search.Queries;
 using EPiServer.Search.Queries.Lucene;
 using EPiServer.Security;
 using EPiServer;
+using EPiServer.ServiceLocation;
 
 namespace TestSite.Business
 {
@@ -23,7 +23,7 @@ namespace TestSite.Business
 
         public virtual bool IsActive
         {
-            get { return SearchSettings.Options.Active; }
+            get { return ServiceLocator.Current.GetInstance<SearchOptions>().Active; }
         }
 
         public virtual SearchResults Search(string searchText, IEnumerable<ContentReference> searchRoots, HttpContextBase context, string languageBranch, int maxResults)
@@ -56,11 +56,11 @@ namespace TestSite.Business
             //Create and add query which groups type conditions using OR
             var typeQueries = new GroupQuery(LuceneOperator.OR);
             query.QueryExpressions.Add(typeQueries);
-            
+
             foreach (var root in searchRoots)
             {
                 var contentRootQuery = new VirtualPathQuery();
-                contentRootQuery.AddContentNodes(root, _contentLoader);
+                contentRootQuery.AddContentNodes(root);
                 typeQueries.QueryExpressions.Add(contentRootQuery);
             }
 

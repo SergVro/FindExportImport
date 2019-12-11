@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using TestSite.Models.Pages;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Filters;
+using EPiServer.Shell.Configuration;
 using EPiServer.Web;
 
 namespace TestSite.Business
@@ -67,7 +67,7 @@ namespace TestSite.Business
         private IEnumerable<PageData> FindPagesByPageTypeRecursively(PageReference pageLink, int pageTypeId)
         {
             var criteria = new PropertyCriteriaCollection
-                               {
+                                {
                                     new PropertyCriteria
                                     {
                                         Name = "PageTypeID",
@@ -75,7 +75,7 @@ namespace TestSite.Business
                                         Condition = CompareCondition.Equal,
                                         Value = pageTypeId.ToString(CultureInfo.InvariantCulture)
                                     }
-                               };
+                                };
 
             // Include content providers serving content beneath the page link specified for the search
             if (_providerManager.ProviderMap.CustomProvidersExist)
@@ -105,7 +105,7 @@ namespace TestSite.Business
 
             if (ContentReference.IsNullOrEmpty(contactsRootPageLink))
             {
-                throw new ConfigurationErrorsException("No contact page root specified in site settings, unable to retrieve contact pages");
+                throw new MissingConfigurationException("No contact page root specified in site settings, unable to retrieve contact pages");
             }
 
             return _contentLoader.GetChildren<ContactPage>(contactsRootPageLink).OrderBy(p => p.PageName);
